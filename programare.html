@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Programare Online — AutoLine Auto Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+  <canvas id="bubblesCanvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="poze/AutoLine-removebg.jpg" alt="AutoLine Logo" class="logo-img"/>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Acasă</a></li>
+        <li><a href="servicii.html" class="nav-link">Servicii</a></li>
+        <li><a href="despre.html" class="nav-link">Despre Noi</a></li>
+        <li><a href="programare.html" class="nav-link active">Programare</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="admin.html" class="nav-link nav-admin"><i class="fas fa-lock"></i> Admin</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <span class="section-tag">Rapid & Simplu</span>
+    <h1>Programare <span class="text-red">Online</span></h1>
+    <p>Completează formularul și te confirmăm în mai puțin de 2 ore</p>
+    <div class="breadcrumb">
+      <a href="index.html">Acasă</a>
+      <i class="fas fa-chevron-right" style="font-size:0.7rem"></i>
+      <span>Programare</span>
+    </div>
+  </div>
+
+  <!-- CONTENT PROGRAMARE -->
+  <section class="section">
+    <div class="container">
+      <div class="booking-wrapper">
+
+        <!-- STÂNGA: Informații utile -->
+        <div class="booking-info">
+          <h3>De ce să te programezi <span class="text-red">online?</span></h3>
+          <p>Economisești timp și eviți aglomerația la recepție. Programările online au prioritate față de prezentările spontane.</p>
+
+          <div class="info-items">
+            <!-- Item 1 -->
+            <div class="info-item">
+              <div class="info-item-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div>
+                <strong>Confirmare Rapidă</strong>
+                <span>Ești confirmat în maxim 2 ore de la trimiterea formularului</span>
+              </div>
+            </div>
+            <!-- Item 2 -->
+            <div class="info-item">
+              <div class="info-item-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div>
+                <strong>Program Flexibil</strong>
+                <span>Luni – Vineri: 08:00 – 18:00 | Sâmbătă: 09:00 – 14:00</span>
+              </div>
+            </div>
+            <!-- Item 3 -->
+            <div class="info-item">
+              <div class="info-item-icon">
+                <i class="fas fa-phone-alt"></i>
+              </div>
+              <div>
+                <strong>Confirmare prin SMS/Telefon</strong>
+                <span>Vei primi un apel de confirmare la numărul introdus</span>
+              </div>
+            </div>
+            <!-- Item 4 -->
+            <div class="info-item">
+              <div class="info-item-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div>
+                <strong>Garanție Inclusă</strong>
+                <span>Toate lucrările au garanție de minim 6 luni</span>
+              </div>
+            </div>
+            <!-- Item 5 -->
+            <div class="info-item">
+              <div class="info-item-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div>
+                <strong>Locație</strong>
+                <span>Str. Ion Creanga 9, Hîrtopul Mare (parcare gratuită)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Poza serviciului -->
+          <div style="margin-top:32px;border-radius:16px;overflow:hidden;border:1px solid var(--border)">
+            <!-- Pune poza exterioară a service-ului -->
+            <img src="poze/exterior.jpg" alt="AutoLine Service" style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover"/>
+          </div>
+        </div>
+
+        <!-- DREAPTA: Formularul de programare -->
+        <!-- id="bookingForm" — identificat de script.js pentru trimitere -->
+        <form class="booking-form" id="bookingForm" novalidate>
+          <h3><i class="fas fa-calendar-check" style="color:var(--red)"></i> Formular de Programare</h3>
+
+          <!-- ---- DATE PERSONALE ---- -->
+          <p style="color:var(--red);font-family:var(--font-title);font-weight:600;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px">
+            <i class="fas fa-user"></i> Date Personale
+          </p>
+
+          <!-- Rând 2 coloane: Nume + Telefon -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="clientName">Nume Prenume *</label>
+              <!-- id="clientName" — citit de script.js la submit -->
+              <input type="text" id="clientName" placeholder="ex: Cazacu Catalin" required/>
+            </div>
+            <div class="form-group">
+              <label for="clientPhone">Telefon *</label>
+              <input type="tel" id="clientPhone" placeholder="+373 69 XXX XXX" required/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="clientEmail">Email (opțional)</label>
+            <input type="email" id="clientEmail" placeholder="email@gmail.com"/>
+          </div>
+
+          <!-- ---- DATE VEHICUL ---- -->
+          <p style="color:var(--red);font-family:var(--font-title);font-weight:600;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;margin:24px 0 16px">
+            <i class="fas fa-car"></i> Date Vehicul
+          </p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="carBrand">Marca & Model *</label>
+              <input type="text" id="carBrand" placeholder="ex: BMW 320d E90" required/>
+            </div>
+            <div class="form-group">
+              <label for="carPlate">Nr. de Înmatriculare</label>
+              <input type="text" id="carPlate" placeholder="ex: MD 001 AAA"/>
+            </div>
+          </div>
+
+          <!-- ---- SERVICIU & DATA ---- -->
+          <p style="color:var(--red);font-family:var(--font-title);font-weight:600;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;margin:24px 0 16px">
+            <i class="fas fa-tools"></i> Serviciu & Data
+          </p>
+
+          <div class="form-group">
+            <label for="serviceType">Serviciu Solicitat *</label>
+            <!-- select cu toate serviciile disponibile -->
+            <select id="serviceType" required>
+              <option value="">— Selectează serviciul —</option>
+              <option value="Schimb Ulei & Filtre">Schimb Ulei & Filtre</option>
+              <option value="Diagnosticare Electronică">Diagnosticare Electronică</option>
+              <option value="Climatizare & AC">Climatizare & Aer Condiționat</option>
+              <option value="Anvelope & Jante">Anvelope & Jante</option>
+              <option value="Frâne & Suspensie">Frâne & Suspensie</option>
+              <option value="ITP & Revizie">Pregătire ITP & Revizie</option>
+              <option value="Curea Distribuție">Curea / Lanț Distribuție</option>
+              <option value="Baterie & Electricitate">Baterie & Electricitate</option>
+              <option value="Altele">Altele (precizează în observații)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appointmentDate">Data Dorită *</label>
+              <!-- min setat prin JS pentru a nu permite date în trecut -->
+              <input type="date" id="appointmentDate" required/>
+            </div>
+            <div class="form-group">
+              <label for="appointmentTime">Ora Preferată *</label>
+              <select id="appointmentTime" required>
+                <option value="">— Selectează ora —</option>
+                <option value="08:00">08:00</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="13:00">13:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="notes">Observații / Probleme Suplimentare</label>
+            <textarea id="notes" placeholder="Descrie problema sau serviciul suplimentar solicitat..."></textarea>
+          </div>
+
+          <!-- Checkbox consimțire -->
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:24px">
+            <input type="checkbox" id="consent" required style="margin-top:4px;accent-color:var(--red);width:16px;height:16px;flex-shrink:0"/>
+            <label for="consent" style="color:var(--gray);font-size:0.85rem;font-weight:400;text-transform:none;letter-spacing:0">
+              Sunt de acord cu <a href="#" style="color:var(--red)">termenii și condițiile</a> și cu utilizarea datelor personale pentru procesarea programării.
+            </label>
+          </div>
+
+          <!-- Buton submit -->
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem">
+            <i class="fas fa-paper-plane"></i> Trimite Programarea
+          </button>
+
+          <!-- Mesajul de succes — ascuns inițial, arătat de JS după submit -->
+          <div class="success-msg" id="successMsg"></div>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <img src="poze/AutoLine-removebg.jpg" alt="AutoLine" class="footer-logo"/>
+          <p>Service auto premium în Chișinău.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Linkuri Rapide</h4>
+          <ul>
+            <li><a href="index.html">Acasă</a></li>
+            <li><a href="servicii.html">Servicii</a></li>
+            <li><a href="despre.html">Despre Noi</a></li>
+            <li><a href="programare.html">Programare</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Servicii</h4>
+          <ul>
+            <li><a href="servicii.html">Schimb Ulei</a></li>
+            <li><a href="servicii.html">Diagnosticare</a></li>
+            <li><a href="servicii.html">Climatizare</a></li>
+            <li><a href="servicii.html">Anvelope</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul class="contact-list">
+            <li><i class="fas fa-map-marker-alt"></i> Str. Ion Creanga 9, Hîrtopul Mare</li>
+            <li><i class="fas fa-phone"></i> +373 61 273 729</li>
+            <li><i class="fas fa-envelope"></i> cazacucatalin010@gmail.com</li>
+            <li><i class="fas fa-clock"></i> Lun-Vin: 08:00 - 18:00</li>
+            <li><i class="fas fa-clock"></i> Sâm: 09:00 - 14:00</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 AutoLine Auto Services.</p>
+        <p>Dezvoltat de <span class="text-red">Cazacu Cătălin</span> — DAW-251</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    // Setăm data minimă pentru câmpul dată = azi (nu permit date în trecut)
+    const dateInput = document.getElementById('appointmentDate');
+    if (dateInput) {
+      const today = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+      dateInput.setAttribute('min', today);
+    }
+  </script>
+</body>
+</html>

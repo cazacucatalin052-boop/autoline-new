@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AutoLine Auto Services</title>
+  <meta name="description" content="Service auto premium în Chișinău — programări online, diagnosticare, schimb ulei, anvelope."/>
+
+  <!-- Fonts: Barlow (titluri bold/italic ca ATS) + Exo 2 (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Exo+2:wght@300;400;500;600&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'"/>
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  </noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+
+  <style>
+    /* =======================================================
+       VARIABILE & RESET — tema neagra cu accent rosu
+    ======================================================= */
+    :root {
+      --red:      #e5192b;
+      --red-dark: #b31220;
+      --red-glow: rgba(229,25,43,0.35);
+      --bg:       #08090d;        /* Mai întunecat, ca ATS */
+      --bg2:      #0f1117;
+      --bg3:      #141720;
+      --card:     rgba(20,23,32,0.85);
+      --border:   rgba(255,255,255,0.07);
+      --white:    #ffffff;
+      --gray:     #7a7f8e;
+      --gray2:    #b0b5c3;
+      --font-heading: 'Barlow', sans-serif;
+      --font-body:    'Exo 2', sans-serif;
+      --radius: 18px;
+      --transition: all 0.3s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar minimalist — ca ATS */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.09); border-radius: 3px; }
+
+    /* =======================================================
+       SCROLL PROGRESS BAR
+    ======================================================= */
+    #scrollProgress {
+      position: fixed; top: 0; left: 0;
+      width: 0%; height: 3px;
+      background: var(--red);
+      z-index: 9999;
+      transition: width 0.08s linear;
+      box-shadow: 0 0 10px var(--red-glow);
+    }
+
+    /* =======================================================
+       BACK TO TOP
+    ======================================================= */
+    #backToTop {
+      position: fixed; bottom: 32px; right: 32px;
+      width: 46px; height: 46px;
+      background: var(--red); color: var(--white);
+      border: none; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem;
+      z-index: 999; opacity: 0; transform: translateY(16px);
+      pointer-events: none;
+      transition: opacity .3s, transform .3s, background .2s;
+      box-shadow: 0 4px 20px var(--red-glow);
+    }
+    #backToTop.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+    #backToTop:hover { background: var(--red-dark); transform: translateY(-3px); }
+
+    /* =======================================================
+       METABALL CANVAS BACKGROUND — da ATS HeroBackground.tsx
+       Fixed, în spate, pointer-events none
+    ======================================================= */
+    #metaCanvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+    }
+
+    /* Tot ce e deasupra canvas-ului */
+    nav, section, footer, .page-hero { position: relative; z-index: 1; }
+
+    /* =======================================================
+       UTILITY
+    ======================================================= */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .text-red { color: var(--red); }
+    .section { padding: 88px 0; }
+    .center-btn { text-align: center; margin-top: 52px; }
+
+    /* =======================================================
+       GLASSMORPHISM CARD — din ATS .glass-card
+       backdrop-filter blur + border subțire
+    ======================================================= */
+    .glass-card {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      /* Linia de sus strălucitoare — din ATS .card-glow::before */
+      position: relative;
+      overflow: hidden;
+      transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease;
+    }
+    /* Linia gradient la topul fiecărui card */
+    .glass-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(229,25,43,.3), transparent);
+      pointer-events: none;
+    }
+    .glass-card:hover {
+      border-color: rgba(229,25,43,.3);
+      box-shadow: 0 0 0 1px rgba(229,25,43,.15), 0 24px 56px rgba(0,0,0,.55);
+    }
+
+    /* Shimmer line — din ATS .shimmer-line */
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+    .shimmer-line {
+      height: 1px; width: 100%;
+      background: linear-gradient(90deg, transparent, rgba(229,25,43,.2), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 3s ease-in-out infinite;
+      border-radius: 999px;
+    }
+
+    /* =======================================================
+       BUTOANE
+    ======================================================= */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 30px; border-radius: 10px;
+      font-family: var(--font-heading); font-size: .93rem;
+      font-weight: 700; letter-spacing: .06em;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: transform .25s ease, box-shadow .25s ease, filter .25s ease, background .2s;
+      text-transform: uppercase;
+    }
+    /* btn-primary — gradient roșu, glow, ca ATS landing-primary-btn */
+    .btn-primary {
+      background: linear-gradient(135deg, #f04050 0%, var(--red) 65%, var(--red) 100%);
+      color: var(--white);
+      border: 1px solid rgba(229,25,43,.3);
+      box-shadow: 0 10px 28px rgba(229,25,43,.3), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px); filter: brightness(1.06);
+      box-shadow: 0 14px 36px rgba(229,25,43,.42), 0 0 24px rgba(229,25,43,.2);
+    }
+    /* btn-outline — ghost button, ca ATS landing-ghost-btn */
+    .btn-outline {
+      background: rgba(255,255,255,.06); color: var(--white);
+      border: 1px solid rgba(255,255,255,.13);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .btn-outline:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.10);
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 8px 24px rgba(0,0,0,.3);
+    }
+    .btn-large { padding: 16px 44px; font-size: 1rem; }
+
+    /* =======================================================
+       SECTION HEADER
+    ======================================================= */
+    .section-tag {
+      display: inline-block;
+      background: rgba(229,25,43,.1);
+      color: var(--red);
+      border: 1px solid rgba(229,25,43,.25);
+      padding: 4px 16px; border-radius: 999px;
+      font-size: .75rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900; line-height: 1.1; margin-bottom: 14px;
+    }
+    .section-subtitle { color: var(--gray); max-width: 580px; margin: 0 auto; }
+
+    /* =======================================================
+       REVEAL ANIMATIONS
+       — Inspirat din ATS .section-reveal cu blur
+    ======================================================= */
+    .reveal {
+      opacity: 0;
+      transform: translate3d(0, 36px, 0);
+      filter: blur(8px);
+      transition: opacity .8s cubic-bezier(.16,1,.3,1),
+                  transform .8s cubic-bezier(.16,1,.3,1),
+                  filter .8s cubic-bezier(.16,1,.3,1);
+      will-change: opacity, transform, filter;
+    }
+    .reveal.visible { opacity: 1; transform: translate3d(0,0,0); filter: blur(0); }
+    .reveal-d1 { transition-delay: 120ms; }
+    .reveal-d2 { transition-delay: 220ms; }
+    .reveal-d3 { transition-delay: 320ms; }
+    .reveal-d4 { transition-delay: 420ms; }
+    .reveal-d5 { transition-delay: 520ms; }
+
+    /* =======================================================
+       NAVBAR
+    ======================================================= */
+    .navbar {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 32px); max-width: 1200px;
+      z-index: 1000;
+      /* Ca ATS landing-nav-shell: pill flotant cu blur */
+      background: rgba(8,9,13,.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius);
+      box-shadow: 0 18px 60px rgba(5,6,10,.35), inset 0 1px 0 rgba(255,255,255,.03);
+      padding: 0 20px;
+      transition: var(--transition);
+    }
+    .navbar.scrolled { box-shadow: 0 24px 72px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04); }
+    .nav-container { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-logo .logo-img { height: 42px; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+    .nav-link {
+      color: var(--gray); text-decoration: none;
+      padding: 7px 14px; border-radius: 8px;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
+      transition: color .2s, background .2s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--white); background: rgba(255,255,255,.07); }
+    .nav-admin { color: var(--red) !important; border: 1px solid rgba(229,25,43,.25); }
+    .nav-admin:hover { background: rgba(229,25,43,.12) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+
+    /* =======================================================
+       HERO
+    ======================================================= */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 110px 48px 100px;
+      max-width: 1160px; margin: 0 auto;
+      gap: 64px;
+      /* Tăietură diagonală în jos — separă hero de services */
+      clip-path: polygon(0 0, 100% 0, 100% 93%, 0 100%);
+      padding-bottom: 140px;
+    }
+    /* Glow radial subtil în hero — ca ATS HeroSection radial */
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 55% at 50% 25%, rgba(229,25,43,.08) 0%, transparent 68%),
+                  radial-gradient(ellipse 50% 35% at 15% 75%, rgba(229,25,43,.05) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+    .hero-content { flex: 1; position: relative; z-index: 1; }
+    .hero-image   { flex: 1; display: flex; justify-content: center; position: relative; z-index: 1; }
+
+    /* Hero stagger — stare inițiala */
+    .hero-animate {
+      opacity: 0; transform: translateY(26px);
+      transition: opacity .72s ease var(--d, 0s), transform .72s ease var(--d, 0s);
+    }
+    .hero-animate.from-right {
+      transform: translateX(38px);
+      transition: opacity .82s ease var(--d, 0s), transform .82s ease var(--d, 0s);
+    }
+    .hero-animate.visible { opacity: 1; transform: translate(0,0); }
+
+    /* Tag cu typewriter cursor */
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(229,25,43,.08); color: var(--red);
+      border: 1px solid rgba(229,25,43,.22);
+      padding: 5px 16px; border-radius: 999px;
+      font-family: var(--font-heading); font-size: .78rem;
+      font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: 18px;
+      border-right: 2px solid var(--red); /* cursorul typewriter */
+      white-space: nowrap; overflow: hidden;
+    }
+    @keyframes blink { 0%,100% { border-color: var(--red); } 50% { border-color: transparent; } }
+    .hero-tag.typing-done { animation: blink .8s step-end infinite; }
+
+    /* Titlu hero — Barlow Black Italic ca ATS */
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 900; font-style: italic;
+      line-height: .96; margin-bottom: 20px;
+      letter-spacing: -.01em;
+    }
+    .hero-subtitle { color: var(--gray); font-size: 1.05rem; margin-bottom: 36px; max-width: 480px; }
+    .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 52px; }
+
+    /* Stats cu counter animat */
+    .hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+    .stat { display: flex; flex-direction: column; }
+    .stat-num {
+      font-family: var(--font-heading);
+      font-size: 2rem; font-weight: 900; color: var(--red); line-height: 1;
+    }
+    .stat-label { font-size: .7rem; color: var(--gray); margin-top: 4px; letter-spacing: .1em; text-transform: uppercase; }
+
+    /* Imaginea hero */
+    .hero-img-wrapper { position: relative; max-width: 480px; width: 100%; }
+    .hero-car-img {
+      width: 100%; border-radius: var(--radius);
+      object-fit: cover; aspect-ratio: 4/3; display: block;
+      border: 1px solid var(--border);
+    }
+    /* Badge-uri flotante */
+    .floating-badge {
+      position: absolute;
+      background: rgba(15,17,23,.96);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      padding: 9px 16px; border-radius: 999px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: .82rem; font-weight: 700; white-space: nowrap;
+      animation: float 3s ease-in-out infinite;
+    }
+    .badge-1 { top: 18px; left: -18px; color: #4ade80; }
+    .badge-1 i { color: #4ade80; }
+    .badge-2 { bottom: 28px; right: -8px; animation-delay: 1.5s; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+
+    /* =======================================================
+       ANIMATED COUNTERS BAND — din ATS AnimatedCounters.tsx
+       4 statistici mari cu counter animat la scroll
+    ======================================================= */
+    .counters-band {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 0;
+      background: rgba(255,255,255,.015);
+    }
+    .counters-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center;
+    }
+    .counter-item .big-num {
+      font-family: var(--font-heading);
+      font-size: 2.8rem; font-weight: 900; font-style: italic;
+      color: var(--red); line-height: 1; display: block;
+    }
+    .counter-item .big-label {
+      font-size: .68rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--gray); margin-top: 6px;
+    }
+
+    /* =======================================================
+       SERVICES GRID
+    ======================================================= */
+    .services-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px;
+    }
+    .service-card {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 30px;
+      position: relative; overflow: hidden;
+      transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+    }
+    /* Linia de sus */
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(229,25,43,.3), transparent);
+    }
+    .service-card:hover {
+      border-color: rgba(229,25,43,.45);
+      box-shadow: 0 0 0 1px rgba(229,25,43,.2), 0 24px 54px rgba(0,0,0,.5);
+      transform: translateY(-9px);
+    }
+    .service-icon {
+      width: 52px; height: 52px;
+      background: rgba(229,25,43,.1); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: var(--red);
+      margin-bottom: 18px;
+      transition: transform .3s ease, background .3s ease;
+    }
+    .service-card:hover .service-icon { transform: scale(1.18); background: rgba(229,25,43,.2); }
+    .service-card h3 { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+    .service-card p { color: var(--gray); font-size: .88rem; margin-bottom: 18px; }
+    .service-link {
+      color: var(--red); text-decoration: none; font-weight: 700; font-size: .86rem;
+      display: inline-flex; align-items: center; gap: 6px; transition: gap .3s;
+      font-family: var(--font-heading); letter-spacing: .05em; text-transform: uppercase;
+    }
+    .service-link:hover { gap: 12px; }
+    /* Shimmer bottom — din ATS FeaturesSection */
+    .service-card .shimmer-line { margin-top: 18px; }
+
+    /* Stat mic în dreapta sus card serviciu — ca ATS features stat */
+    .service-stat {
+      position: absolute; top: 20px; right: 20px; text-align: right;
+    }
+    .service-stat-num {
+      font-family: var(--font-heading); font-size: 1.1rem; font-weight: 900;
+      color: var(--red); line-height: 1;
+    }
+    .service-stat-lbl {
+      font-size: .65rem; color: var(--gray); letter-spacing: .1em;
+      text-transform: uppercase; display: block; margin-top: 2px;
+    }
+
+    /* =======================================================
+       COMPARISON TABLE — din ATS ComparisonTable.tsx
+       Adaptată pentru service auto
+    ======================================================= */
+    .comparison-section { padding: 88px 0; }
+    .comparison-table-wrap { overflow-x: auto; }
+    .comp-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .comp-table th {
+      padding: 16px; text-align: center;
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: .78rem; letter-spacing: .1em; text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .comp-table th:first-child { text-align: left; color: var(--gray); }
+    .comp-table th.hl { color: var(--red); }
+    .comp-table td {
+      padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.05);
+      color: var(--gray2); text-align: center;
+    }
+    .comp-table td:first-child {
+      text-align: left; color: rgba(255,255,255,.75);
+      font-size: .82rem; letter-spacing: .03em;
+      font-family: 'Roboto Mono', monospace;
+    }
+    .comp-table tr:nth-child(even) td { background: rgba(255,255,255,.018); }
+    /* Bifă verde / X roșu */
+    .tick { color: #4ade80; font-size: 1rem; }
+    .cross { color: rgba(229,25,43,.45); font-size: 1rem; }
+
+    /* =======================================================
+       WHY US
+    ======================================================= */
+    .why-us { background: rgba(255,255,255,.018); border-top: 1px solid var(--border); }
+    .why-us-inner { display: flex; gap: 64px; align-items: center; }
+    .why-us-image { flex: 1; position: relative; }
+    .why-us-image img {
+      width: 100%; border-radius: var(--radius);
+      object-fit: cover; aspect-ratio: 4/3;
+      border: 1px solid var(--border);
+    }
+    .review-box {
+      position: absolute; bottom: -22px; right: -22px;
+      background: var(--bg3); border: 1px solid var(--border);
+      padding: 18px 22px; border-radius: 12px; max-width: 210px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    .review-box p { font-size: .82rem; margin: 6px 0; color: var(--gray2); font-style: italic; }
+    .review-box span { font-size: .75rem; color: var(--gray); }
+    .why-us-content { flex: 1; }
+    .why-us-content p { color: var(--gray); margin-bottom: 22px; }
+    .advantages-list { list-style: none; margin-bottom: 30px; display: flex; flex-direction: column; gap: 11px; }
+    .advantages-list li {
+      display: flex; align-items: center; gap: 12px;
+      color: var(--gray2); font-size: .93rem;
+    }
+    .advantages-list li i { color: var(--red); font-size: .95rem; flex-shrink: 0; }
+
+    /* =======================================================
+       TESTIMONIALE
+    ======================================================= */
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px;
+    }
+    .testimonial-card {
+      background: var(--card); backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 30px;
+      position: relative; overflow: hidden;
+      transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    }
+    .testimonial-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(229,25,43,.25), transparent);
+    }
+    .testimonial-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(229,25,43,.28);
+      box-shadow: 0 18px 48px rgba(0,0,0,.4);
+    }
+    .testimonial-stars { font-size: 1rem; margin-bottom: 14px; }
+    .testimonial-card p { color: var(--gray); font-style: italic; margin-bottom: 22px; line-height: 1.7; font-size: .9rem; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .author-img {
+      width: 46px; height: 46px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--red); background: var(--bg3);
+    }
+    .testimonial-author strong { display: block; font-weight: 700; font-size: .92rem; }
+    .testimonial-author span { font-size: .77rem; color: var(--gray); }
+
+    /* =======================================================
+       CTA BAND — cu noise texture (din ATS)
+    ======================================================= */
+    .cta-band {
+      background: linear-gradient(135deg, rgba(50,5,10,.95) 0%, rgba(12,12,18,.98) 50%, rgba(50,5,10,.95) 100%);
+      border-top: 1px solid rgba(229,25,43,.18);
+      border-bottom: 1px solid rgba(229,25,43,.18);
+      padding: 88px 24px; text-align: center; position: relative; overflow: hidden;
+    }
+    /* Noise texture overlay */
+    .cta-band::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: .045; pointer-events: none; z-index: 0;
+    }
+    .cta-band .container { position: relative; z-index: 1; }
+    .cta-band h2 {
+      font-family: var(--font-heading); font-size: clamp(1.8rem,4vw,2.8rem);
+      font-weight: 900; font-style: italic; margin-bottom: 12px;
+    }
+    .cta-band p { color: var(--gray); margin-bottom: 32px; font-size: 1.05rem; }
+
+    /* =======================================================
+       FOOTER
+    ======================================================= */
+    .footer { background: #050508; border-top: 1px solid var(--border); padding: 64px 0 0; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; margin-bottom: 48px; }
+    .footer-logo { height: 42px; object-fit: contain; margin-bottom: 14px; }
+    .footer-col p { color: var(--gray); font-size: .88rem; line-height: 1.7; margin-bottom: 20px; }
+    .footer-col h4 {
+      font-family: var(--font-heading); font-size: .88rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .1em; margin-bottom: 18px; color: var(--white);
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .footer-col ul li a {
+      color: var(--gray); text-decoration: none; font-size: .88rem; transition: color .2s;
+    }
+    .footer-col ul li a:hover { color: var(--red); }
+    .contact-list li { display: flex; align-items: flex-start; gap: 10px; color: var(--gray); font-size: .88rem; }
+    .contact-list li i { color: var(--red); margin-top: 3px; flex-shrink: 0; }
+    .social-links { display: flex; gap: 10px; }
+    .social-links a {
+      width: 38px; height: 38px; background: rgba(255,255,255,.05);
+      border: 1px solid var(--border); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gray); text-decoration: none; font-size: .95rem;
+      transition: var(--transition);
+    }
+    .social-links a:hover { background: var(--red); color: var(--white); border-color: var(--red); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding: 18px 0;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
+    .footer-bottom p { color: var(--gray); font-size: .82rem; }
+
+    /* =======================================================
+       RESPONSIVE
+    ======================================================= */
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; padding: 100px 24px 80px; text-align: center; clip-path: polygon(0 0,100% 0,100% 97%,0 100%); }
+      .hero-buttons { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero::after { display: none; }
+      .why-us-inner { flex-direction: column; }
+      .review-box { position: static; margin-top: 14px; max-width: 100%; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .counters-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 600px) {
+      .nav-links {
+        display: none; position: fixed; top: 80px; left: 12px; right: 12px;
+        background: rgba(8,9,13,.97); backdrop-filter: blur(20px);
+        flex-direction: column; padding: 16px; border-radius: 14px;
+        border: 1px solid var(--border); gap: 3px;
+      }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .counters-grid { grid-template-columns: 1fr 1fr; }
+      .comp-table td, .comp-table th { padding: 11px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Bara progres scroll -->
+  <div id="scrollProgress"></div>
+  <!-- Buton inapoi sus -->
+  <button id="backToTop" aria-label="Inapoi sus"><i class="fas fa-chevron-up"></i></button>
+
+  <!-- ==========================================================
+       METABALL CANVAS BACKGROUND
+       Înlocuiește bulele simple cu câmpul metaball din ATS
+       (HeroBackground.tsx portat în vanilla JS)
+  ========================================================== -->
+  <canvas id="metaCanvas"></canvas>
+
+  <!-- NAVBAR — pill flotant ca ATS LandingNavbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="poze/AutoLine-removebg.jpg" alt="AutoLine" class="logo-img"/>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html"      class="nav-link active">Acasa</a></li>
+        <li><a href="servicii.html"   class="nav-link">Servicii</a></li>
+        <li><a href="despre.html"     class="nav-link">Despre Noi</a></li>
+        <li><a href="programare.html" class="nav-link">Programare</a></li>
+        <li><a href="contact.html"    class="nav-link">Contact</a></li>
+        <li><a href="admin.html"      class="nav-link nav-admin"><i class="fas fa-lock"></i> Admin</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Meniu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==========================================================
+       HERO — stagger + typewriter + counters + diagonal clip
+  ========================================================== -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <!-- Typewriter tag — cursorul clipitor e adaugat de JS dupa terminare -->
+      <span class="hero-tag hero-animate" style="--d:0s" id="heroTag">Service Auto Premium</span>
+
+      <!-- Titlu Barlow Black Italic — ca ATS PRECISION / ALGORITHMS -->
+      <h1 class="hero-title hero-animate" style="--d:.16s">
+        Ingrijim <span class="text-red">Masina Ta</span><br/>
+        Cu Pasiune &amp; Precizie
+      </h1>
+
+      <p class="hero-subtitle hero-animate" style="--d:.32s">
+        AutoLine ofera servicii auto de cea mai inalta calitate.<br/>
+        Programeaza-te online si lasa specialistii sa aiba grija de vehiculul tau.
+      </p>
+
+      <div class="hero-buttons hero-animate" style="--d:.48s">
+        <a href="programare.html" class="btn btn-primary">
+          <i class="fas fa-calendar-check"></i> Programeaza-te Acum
+        </a>
+        <a href="servicii.html" class="btn btn-outline">
+          <i class="fas fa-tools"></i> Vezi Serviciile
+        </a>
+      </div>
+
+      <!-- Stats cu .hero-counter animate de JS ca AnimatedCounters.tsx -->
+      <div class="hero-stats hero-animate" style="--d:.64s">
+        <div class="stat">
+          <span class="stat-num"><span class="hero-counter" data-target="2500">0</span>+</span>
+          <span class="stat-label">Clienti Multumiti</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num"><span class="hero-counter" data-target="12">0</span>+</span>
+          <span class="stat-label">Ani Experienta</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num"><span class="hero-counter" data-target="98">0</span>%</span>
+          <span class="stat-label">Satisfactie</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Imaginea vine din dreapta -->
+    <div class="hero-image hero-animate from-right" style="--d:.2s">
+      <div class="hero-img-wrapper">
+        <img src="poze/exterior.jpg" alt="Masina AutoLine" class="hero-car-img"/>
+        <div class="floating-badge badge-1">
+          <i class="fas fa-shield-alt"></i><span>Garantie 6 luni</span>
+        </div>
+        <div class="floating-badge badge-2">
+          <i class="fas fa-star"></i><span>4.9 / 5</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       ANIMATED COUNTERS BAND — 4 stats mari ca AnimatedCounters.tsx
+       data-target = valoarea finala, data-prefix/suffix = decoratii
+  ========================================================== -->
+  <div class="counters-band">
+    <div class="container">
+      <div class="counters-grid">
+        <div class="counter-item reveal">
+          <span class="big-num"><span class="band-counter" data-target="15000">0</span>+</span>
+          <span class="big-label">Lucrari Efectuate</span>
+        </div>
+        <div class="counter-item reveal reveal-d1">
+          <span class="big-num"><span class="band-counter" data-target="2500">0</span>+</span>
+          <span class="big-label">Clienti Multumiti</span>
+        </div>
+        <div class="counter-item reveal reveal-d2">
+          <span class="big-num"><span class="band-counter" data-target="12">0</span>+</span>
+          <span class="big-label">Ani Experienta</span>
+        </div>
+        <div class="counter-item reveal reveal-d3">
+          <span class="big-num"><span class="band-counter" data-target="8">0</span></span>
+          <span class="big-label">Tehnicieni Certificati</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       SERVICES PREVIEW — cu stat mic in colt si shimmer bottom
+  ========================================================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Ce Oferim</span>
+        <h2 class="section-title">Serviciile Noastre <span class="text-red">Principale</span></h2>
+        <p class="section-subtitle">Echipa noastra de tehnicieni certificati este pregatita sa rezolve orice problema</p>
+      </div>
+      <div class="services-grid">
+        <!-- Card 1 -->
+        <div class="service-card reveal">
+          <div class="service-stat">
+            <span class="service-stat-num">350+</span>
+            <span class="service-stat-lbl">MDL</span>
+          </div>
+          <div class="service-icon"><i class="fas fa-oil-can"></i></div>
+          <h3>Schimb Ulei &amp; Filtre</h3>
+          <p>Schimb de ulei motor, filtre aer, ulei, combustibil si habitaclu cu produse premium.</p>
+          <a href="servicii.html" class="service-link">Afla mai mult <i class="fas fa-arrow-right"></i></a>
+          <div class="shimmer-line"></div>
+        </div>
+        <!-- Card 2 -->
+        <div class="service-card reveal reveal-d1">
+          <div class="service-stat">
+            <span class="service-stat-num">200+</span>
+            <span class="service-stat-lbl">MDL</span>
+          </div>
+          <div class="service-icon"><i class="fas fa-microchip"></i></div>
+          <h3>Diagnosticare Auto</h3>
+          <p>Scanare electronica completa cu echipamente moderne pentru identificarea erorilor.</p>
+          <a href="servicii.html" class="service-link">Afla mai mult <i class="fas fa-arrow-right"></i></a>
+          <div class="shimmer-line"></div>
+        </div>
+        <!-- Card 3 -->
+        <div class="service-card reveal reveal-d2">
+          <div class="service-stat">
+            <span class="service-stat-num">400+</span>
+            <span class="service-stat-lbl">MDL</span>
+          </div>
+          <div class="service-icon"><i class="fas fa-wind"></i></div>
+          <h3>Climatizare &amp; AC</h3>
+          <p>Incarcare freon, curatare sistem de climatizare si reparatii compresoare AC.</p>
+          <a href="servicii.html" class="service-link">Afla mai mult <i class="fas fa-arrow-right"></i></a>
+          <div class="shimmer-line"></div>
+        </div>
+        <!-- Card 4 -->
+        <div class="service-card reveal reveal-d3">
+          <div class="service-stat">
+            <span class="service-stat-num">150+</span>
+            <span class="service-stat-lbl">MDL</span>
+          </div>
+          <div class="service-icon"><i class="fas fa-circle-notch"></i></div>
+          <h3>Anvelope &amp; Jante</h3>
+          <p>Montaj, echilibrare, aliniere roti si depozitare anvelope sezoniere.</p>
+          <a href="servicii.html" class="service-link">Afla mai mult <i class="fas fa-arrow-right"></i></a>
+          <div class="shimmer-line"></div>
+        </div>
+        <!-- Card 5 -->
+        <div class="service-card reveal reveal-d4">
+          <div class="service-stat">
+            <span class="service-stat-num">500+</span>
+            <span class="service-stat-lbl">MDL</span>
+          </div>
+          <div class="service-icon"><i class="fas fa-dot-circle"></i></div>
+          <h3>Frane &amp; Suspensie</h3>
+          <p>Verificare si inlocuire placute, discuri, amortizoare si arcuri de suspensie.</p>
+          <a href="servicii.html" class="service-link">Afla mai mult <i class="fas fa-arrow-right"></i></a>
+          <div class="shimmer-line"></div>
+        </div>
+        <!-- Card 6 -->
+        <div class="service-card reveal reveal-d5">
+          <div class="service-stat">
+            <span class="service-stat-num">250+</span>
+            <span class="service-stat-lbl">MDL</span>
+          </div>
+          <div class="service-icon"><i class="fas fa-clipboard-check"></i></div>
+          <h3>ITP &amp; Revizie</h3>
+          <p>Pregatire pentru inspectie tehnica periodica si revizii complete ale vehiculului.</p>
+          <a href="servicii.html" class="service-link">Afla mai mult <i class="fas fa-arrow-right"></i></a>
+          <div class="shimmer-line"></div>
+        </div>
+      </div>
+      <div class="center-btn">
+        <a href="servicii.html" class="btn btn-primary">Vezi Toate Serviciile</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       COMPARISON TABLE — din ATS ComparisonTable.tsx
+       Adaptat pentru AutoLine vs Alte Service-uri vs DIY
+  ========================================================== -->
+  <section class="comparison-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">De Ce Noi?</span>
+        <h2 class="section-title">AutoLine vs <span class="text-red">Alternativele</span></h2>
+        <p class="section-subtitle">Compara si alege cu incredere</p>
+      </div>
+      <div class="glass-card comparison-table-wrap reveal">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:18px 20px">Caracteristica</th>
+              <th class="hl">AutoLine</th>
+              <th>Alt Service</th>
+              <th>DIY / Mecanic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Programare online 24/7</td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td></tr>
+            <tr><td>Garantie 6 luni la lucrari</td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td></tr>
+            <tr><td>Diagnosticare electronica</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td></tr>
+            <tr><td>Piese originale / premium</td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td></tr>
+            <tr><td>Preturi transparente</td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Tehnicieni certificati</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td></tr>
+            <tr><td>Confirmare imediata</td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td></tr>
+            <tr><td>Raport scris dupa lucrare</td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td></tr>
+            <tr><td>Parcare gratuita</td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td><td><span class="tick">✓</span></td></tr>
+            <tr><td>Fara costuri ascunse</td><td><span class="tick">✓</span></td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       WHY US
+  ========================================================== -->
+  <section class="why-us section reveal">
+    <div class="container">
+      <div class="why-us-inner">
+        <div class="why-us-image">
+          <img src="poze/poza-service.png" alt="Service AutoLine"/>
+          <div class="review-box">
+            <div>⭐⭐⭐⭐⭐</div>
+            <p>"Servicii excelente, personal amabil!"</p>
+            <span>— Ion Popescu</span>
+          </div>
+        </div>
+        <div class="why-us-content">
+          <span class="section-tag">Povestea Noastra</span>
+          <h2 class="section-title">Experienta &amp; <span class="text-red">Calitate</span> la cel mai inalt nivel</h2>
+          <p>AutoLine nu este doar un service auto — este un partener de incredere care iti asigura siguranta pe drum. Lucram cu pasiune, precizie si respect fata de fiecare client.</p>
+          <ul class="advantages-list">
+            <li><i class="fas fa-check-circle"></i> Tehnicieni certificati cu experienta internationala</li>
+            <li><i class="fas fa-check-circle"></i> Echipamente de diagnosticare de ultima generatie</li>
+            <li><i class="fas fa-check-circle"></i> Piese originale sau de calitate superioara</li>
+            <li><i class="fas fa-check-circle"></i> Garantie 6 luni la toate lucrarile efectuate</li>
+            <li><i class="fas fa-check-circle"></i> Preturi transparente, fara costuri ascunse</li>
+            <li><i class="fas fa-check-circle"></i> Programari rapide online, 24/7</li>
+          </ul>
+          <a href="despre.html" class="btn btn-primary">Despre Echipa Noastra</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       TESTIMONIALE
+  ========================================================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">Recenzii</span>
+        <h2 class="section-title">Ce Spun <span class="text-red">Clientii Nostri</span></h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p>"Am venit la AutoLine pentru un schimb de ulei si am ramas impresionat de profesionalismul echipei. Recomand cu caldura!"</p>
+          <div class="testimonial-author">
+            <img src="poze/clienti service.jpg" alt="Client 1" class="author-img"/>
+            <div><strong>Alexandru Marin</strong><span>BMW 320d, 2019</span></div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal reveal-d1">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p>"Diagnosticare rapida, pret corect si lucrare de calitate. Au reparat suspensia in aceeasi zi. Multumesc!"</p>
+          <div class="testimonial-author">
+            <img src="poze/client service2.jpg" alt="Client 2" class="author-img"/>
+            <div><strong>Maria Ionescu</strong><span>Volkswagen Golf 7</span></div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal reveal-d2">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p>"M-am programat online, am venit la ora stabilita si totul a decurs perfect. Cel mai bun service din oras!"</p>
+          <div class="testimonial-author">
+            <img src="poze/client service3.jpg" alt="Client 3" class="author-img"/>
+            <div><strong>Andrei Vasile</strong><span>Toyota Corolla, 2021</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <div class="container">
+      <h2>Gata sa programezi o vizita?</h2>
+      <p>Echipa AutoLine te asteapta. Programare online rapida, confirmare imediata.</p>
+      <a href="programare.html" class="btn btn-primary btn-large">
+        <i class="fas fa-calendar-plus"></i> Programeaza-te Gratuit
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <img src="poze/AutoLine-removebg.jpg" alt="AutoLine" class="footer-logo"/>
+          <p>Service auto premium in Chisinau. Profesionalism, calitate si transparenta in fiecare lucrare.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Linkuri Rapide</h4>
+          <ul>
+            <li><a href="index.html">Acasa</a></li>
+            <li><a href="servicii.html">Servicii</a></li>
+            <li><a href="despre.html">Despre Noi</a></li>
+            <li><a href="programare.html">Programare</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Servicii</h4>
+          <ul>
+            <li><a href="servicii.html">Schimb Ulei</a></li>
+            <li><a href="servicii.html">Diagnosticare</a></li>
+            <li><a href="servicii.html">Climatizare</a></li>
+            <li><a href="servicii.html">Anvelope</a></li>
+            <li><a href="servicii.html">Frane</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul class="contact-list">
+            <li><i class="fas fa-map-marker-alt"></i> Str. Ion Creanga 9, Hirtopul Mare</li>
+            <li><i class="fas fa-phone"></i> +373 61 273 729</li>
+            <li><i class="fas fa-envelope"></i> cazacucatalin010@gmail.com</li>
+            <li><i class="fas fa-clock"></i> Lun-Vin: 08:00 - 18:00</li>
+            <li><i class="fas fa-clock"></i> Sam: 09:00 - 14:00</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 AutoLine Auto Services. Toate drepturile rezervate.</p>
+        <p>Dezvoltat de <span class="text-red">Cazacu Catalin</span> — Stagiu de Practica DAW-251</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  /* ===========================================================
+     TOATE JS-urile — fiecare bloc comentat ce face si de unde vine
+  =========================================================== */
+
+  /* -----------------------------------------------------------
+     1. METABALL CANVAS BACKGROUND
+     Port vanilla JS din ATS HeroBackground.tsx
+     Deseneaza un camp de "blob"-uri care se misca lent.
+     Culori: rosu (ca tema AutoLine, nu albastru ca ATS)
+  ----------------------------------------------------------- */
+  (function() {
+    var canvas = document.getElementById('metaCanvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = 0, h = 0;
+
+    function resize() {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width  = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width  = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    /* 6 blob-uri cu pozitii, viteze si faze aleatoare */
+    var blobs = [];
+    for (var i = 0; i < 6; i++) {
+      blobs.push({
+        x: Math.random(), y: Math.random(),
+        vx: (Math.random() - 0.5) * 0.00035,
+        vy: (Math.random() - 0.5) * 0.00028,
+        r: 0.14 + Math.random() * 0.18,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    var gridSize = 4; /* rezolutia grid-ului metaball — mai mare = mai rapid */
+    var time = 0;
+
+    function draw() {
+      time += 0.007;
+
+      /* Misca blob-urile */
+      for (var i = 0; i < blobs.length; i++) {
+        var b = blobs[i];
+        b.x += b.vx + Math.sin(time + b.phase) * 0.00018;
+        b.y += b.vy + Math.cos(time * 0.65 + b.phase) * 0.00013;
+        if (b.x < -0.1 || b.x > 1.1) b.vx *= -1;
+        if (b.y < -0.1 || b.y > 1.1) b.vy *= -1;
+        b.x = Math.max(-0.2, Math.min(1.2, b.x));
+        b.y = Math.max(-0.2, Math.min(1.2, b.y));
+      }
+
+      /* Fundalul de baza — foarte inchis */
+      ctx.fillStyle = '#08090d';
+      ctx.fillRect(0, 0, w, h);
+
+      /* Calcul camp metaball pe un grid redus */
+      var iw = Math.ceil(w / gridSize);
+      var ih = Math.ceil(h / gridSize);
+      var imgData = ctx.createImageData(iw, ih);
+      var data = imgData.data;
+
+      for (var py = 0; py < ih; py++) {
+        var ny = py / ih;
+        for (var px = 0; px < iw; px++) {
+          var nx = px / iw;
+          var field = 0;
+          for (var bi = 0; bi < blobs.length; bi++) {
+            var dx = nx - blobs[bi].x;
+            var dy = ny - blobs[bi].y;
+            var r2 = blobs[bi].r;
+            field += (r2 * r2) / (dx * dx + dy * dy + 0.001);
+          }
+          var t  = Math.min(field * 0.13, 1);
+          var t2 = t * t;
+          var t3 = t2 * t;
+          var idx = (py * iw + px) * 4;
+          /* Culori rosu-intunecate — r1/g1/b1 = fundal, r2/g2/b2 = blob core */
+          data[idx]     = Math.floor(8  + t2 * 180);  /* R */
+          data[idx + 1] = Math.floor(4  + t2 *  20);  /* G */
+          data[idx + 2] = Math.floor(10 + t  *  22 + t3 * 18); /* B */
+          data[idx + 3] = 255;
+        }
+      }
+
+      /* Punem grid-ul pe un OffscreenCanvas si il scalm la dimensiunea ferestrei */
+      var off = new OffscreenCanvas(iw, ih);
+      var offCtx = off.getContext('2d');
+      offCtx.putImageData(imgData, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(off, 0, 0, w, h);
+
+      /* Highlight specular pe fiecare blob — glow subtil */
+      for (var i = 0; i < blobs.length; i++) {
+        var bx = blobs[i].x * w, by = blobs[i].y * h, br = blobs[i].r * w * 0.55;
+        var hl = ctx.createRadialGradient(bx, by, 0, bx, by, br);
+        hl.addColorStop(0,   'rgba(229,25,43,0.055)');
+        hl.addColorStop(0.4, 'rgba(180,20,30,0.025)');
+        hl.addColorStop(1,   'transparent');
+        ctx.fillStyle = hl;
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      /* Vigneta — intuneca marginile, clarifica centrul */
+      var vig = ctx.createRadialGradient(w*.5, h*.4, w*.12, w*.5, h*.5, w*.82);
+      vig.addColorStop(0, 'transparent');
+      vig.addColorStop(1, 'rgba(3,4,8,0.65)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, w, h);
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+
+  /* -----------------------------------------------------------
+     2. SCROLL PROGRESS BAR
+  ----------------------------------------------------------- */
+  (function() {
+    var bar = document.getElementById('scrollProgress');
+    window.addEventListener('scroll', function() {
+      var pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      bar.style.width = Math.min(pct, 100) + '%';
+    }, { passive: true });
+  })();
+
+
+  /* -----------------------------------------------------------
+     3. BACK TO TOP
+  ----------------------------------------------------------- */
+  (function() {
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() {
+      btn.classList.toggle('visible', window.scrollY > 300);
+    }, { passive: true });
+    btn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+
+
+  /* -----------------------------------------------------------
+     4. NAVBAR scroll + hamburger
+  ----------------------------------------------------------- */
+  (function() {
+    var navbar = document.getElementById('navbar');
+    var ham = document.getElementById('hamburger');
+    var links = document.getElementById('navLinks');
+    window.addEventListener('scroll', function() {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+    if (ham) ham.addEventListener('click', function() { links.classList.toggle('open'); });
+    document.querySelectorAll('.nav-link').forEach(function(l) {
+      l.addEventListener('click', function() { links.classList.remove('open'); });
+    });
+  })();
+
+
+  /* -----------------------------------------------------------
+     5. HERO STAGGER — adauga .visible dupa 100ms
+  ----------------------------------------------------------- */
+  setTimeout(function() {
+    document.querySelectorAll('.hero-animate').forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }, 100);
+
+
+  /* -----------------------------------------------------------
+     6. TYPEWRITER pe hero-tag
+     Scrie caracter cu caracter ca ATS hero
+  ----------------------------------------------------------- */
+  (function() {
+    var el = document.getElementById('heroTag');
+    if (!el) return;
+    var full = el.textContent.trim();
+    el.textContent = '';
+    var i = 0;
+    setTimeout(function() {
+      var t = setInterval(function() {
+        el.textContent += full.charAt(i++);
+        if (i >= full.length) {
+          clearInterval(t);
+          el.classList.add('typing-done'); /* cursor clipitor */
+        }
+      }, 52);
+    }, 280);
+  })();
+
+
+  /* -----------------------------------------------------------
+     7. HERO COUNTERS — de la 0 la data-target in 1.8s
+     Pornesc la 1400ms (dupa ce hero-ul e vizibil)
+     Inspirat din ATS AnimatedCounters.tsx
+  ----------------------------------------------------------- */
+  function runCounter(el, duration) {
+    var target = parseInt(el.getAttribute('data-target'));
+    var start  = Date.now();
+    var t = setInterval(function() {
+      var p = Math.min((Date.now() - start) / duration, 1);
+      var e = 1 - Math.pow(1 - p, 3); /* ease-out cubic, ca ATS */
+      el.textContent = Math.floor(e * target).toLocaleString('ro-RO');
+      if (p >= 1) clearInterval(t);
+    }, 16);
+  }
+  setTimeout(function() {
+    document.querySelectorAll('.hero-counter').forEach(function(el) { runCounter(el, 1800); });
+  }, 1400);
+
+
+  /* -----------------------------------------------------------
+     8. INTERSECTION OBSERVER — .reveal si .band-counter
+     .reveal: blur + fade + slide, ca ATS .section-reveal
+     .band-counter: counter animat cand intra in viewport
+     Inspirat din ATS AnimatedCounters useEffect IntersectionObserver
+  ----------------------------------------------------------- */
+  (function() {
+    /* Reveal elements */
+    var revealObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el) { revealObs.observe(el); });
+
+    /* Band counters */
+    var counterObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          runCounter(entry.target, 2000);
+          counterObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.band-counter').forEach(function(el) { counterObs.observe(el); });
+  })();
+
+  </script>
+</body>
+</html>
