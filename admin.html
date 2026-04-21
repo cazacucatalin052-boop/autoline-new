@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — AutoLine</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- ACCES RESTRICTIONAT — afisat daca nu e admin -->
+<div id="accessDenied" style="display:none; min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:40px; gap:16px">
+  <i class="fas fa-lock" style="font-size:3rem; color:var(--accent)"></i>
+  <h2 style="font-family:var(--font-d); font-size:1.8rem">Acces restricționat</h2>
+  <p style="color:var(--gray2); max-width:380px">Această pagină este disponibilă doar pentru administratori. Autentifică-te cu un cont admin sau contactează-l pe Cazacu.</p>
+  <a href="index.html" class="btn btn-ghost"><i class="fas fa-house"></i> Înapoi Acasă</a>
+</div>
+
+<!-- ADMIN INTERFACE -->
+<div id="adminInterface" style="display:none">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><img src="poze/AutoLine-removebg.jpg" alt="AutoLine"/></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Acasă</a></li>
+        <li><a href="programare.html" class="nav-link">Programare</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- Dashboard body -->
+  <div class="admin-wrap">
+    <div class="admin-body">
+
+      <!-- Header -->
+      <div class="admin-top">
+        <div class="admin-title">
+          <h1>Dashboard <span class="text-accent">AutoLine</span></h1>
+          <p id="adminGreeting">Gestionează programările clienților</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="openModal('usersModal')">
+            <i class="fas fa-users"></i> Utilizatori
+          </button>
+          <button class="btn btn-primary" onclick="openModal('addModal')">
+            <i class="fas fa-plus"></i> Adaugă Programare
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="admin-stats">
+        <div class="card astat">
+          <div class="astat-num" id="statTotal">0</div>
+          <div class="astat-lbl">Total Programări</div>
+        </div>
+        <div class="card astat">
+          <div class="astat-num" id="statPending">0</div>
+          <div class="astat-lbl">În Așteptare</div>
+        </div>
+        <div class="card astat">
+          <div class="astat-num" id="statConfirmed">0</div>
+          <div class="astat-lbl">Confirmate</div>
+        </div>
+        <div class="card astat">
+          <div class="astat-num" id="statCompleted">0</div>
+          <div class="astat-lbl">Finalizate</div>
+        </div>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="filter-tabs">
+        <button class="ftab active" onclick="setFilter('all', this)"><i class="fas fa-list"></i> Toate</button>
+        <button class="ftab" onclick="setFilter('pending', this)"><i class="fas fa-hourglass-half"></i> În Așteptare</button>
+        <button class="ftab" onclick="setFilter('confirmed', this)"><i class="fas fa-check"></i> Confirmate</button>
+        <button class="ftab" onclick="setFilter('completed', this)"><i class="fas fa-flag-checkered"></i> Finalizate</button>
+        <button class="ftab" onclick="setFilter('cancelled', this)"><i class="fas fa-xmark"></i> Anulate</button>
+      </div>
+
+      <!-- Search -->
+      <div class="admin-search">
+        <input type="text" id="searchInput" placeholder="Caută după nume, mașină sau serviciu..."
+               oninput="renderTable()"/>
+        <input type="date" id="dateFilter" onchange="renderTable()"
+               style="background:var(--card);border:1px solid var(--border2);color:var(--white);border-radius:var(--r);padding:10px 14px;font-size:0.85rem;outline:none;"/>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+          <i class="fas fa-download"></i> Export CSV
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="clearAll()">
+          <i class="fas fa-trash"></i> Șterge Tot
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="card" style="overflow:hidden">
+        <div class="table-wrap">
+          <table class="bookings-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Client</th>
+                <th>Telefon</th>
+                <th>Mașină</th>
+                <th>Serviciu</th>
+                <th>Data</th>
+                <th>Ora</th>
+                <th>Status</th>
+                <th>Acțiuni</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <i class="fas fa-calendar-xmark"></i>
+          <h3>Nicio programare găsită</h3>
+          <p>Nu există programări în această categorie.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Adaugă Programare Manuală -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Adaugă Programare</h3>
+      <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    </div>
+    <form style="display:flex;flex-direction:column;gap:16px" onsubmit="submitManual(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nume Client *</label>
+          <input type="text" id="mName" required/>
+        </div>
+        <div class="form-group">
+          <label>Telefon *</label>
+          <input type="tel" id="mPhone" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Mașina *</label>
+        <input type="text" id="mCar" placeholder="Marcă, Model, An" required/>
+      </div>
+      <div class="form-group">
+        <label>Serviciu *</label>
+        <select id="mService" required>
+          <option value="">— Alege —</option>
+          <option>Schimb Ulei & Filtre</option>
+          <option>Diagnosticare Auto</option>
+          <option>Climatizare & AC</option>
+          <option>Anvelope & Jante</option>
+          <option>Frâne & Suspensie</option>
+          <option>ITP & Revizie</option>
+          <option>Curățare Exterior</option>
+          <option>Curățare Interior</option>
+          <option>Electricitate Auto</option>
+          <option>Alt serviciu</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data *</label>
+          <input type="date" id="mDate" required/>
+        </div>
+        <div class="form-group">
+          <label>Ora *</label>
+          <select id="mTime" required>
+            <option value="">— Alege —</option>
+            <option>08:00</option><option>08:30</option>
+            <option>09:00</option><option>09:30</option>
+            <option>10:00</option><option>10:30</option>
+            <option>11:00</option><option>11:30</option>
+            <option>12:00</option><option>13:00</option>
+            <option>14:00</option><option>15:00</option>
+            <option>16:00</option><option>17:00</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="mStatus">
+          <option value="pending">În Așteptare</option>
+          <option value="confirmed">Confirmat</option>
+          <option value="completed">Finalizat</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Mențiuni</label>
+        <textarea id="mNotes" rows="2"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="justify-content:center">
+        <i class="fas fa-plus"></i> Adaugă Programare
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: Editare programare -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Editează Programarea</h3>
+      <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+    </div>
+    <form style="display:flex;flex-direction:column;gap:16px" onsubmit="saveEdit(event)">
+      <input type="hidden" id="eId"/>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nume Client</label>
+          <input type="text" id="eName"/>
+        </div>
+        <div class="form-group">
+          <label>Telefon</label>
+          <input type="tel" id="ePhone"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Mașina</label>
+        <input type="text" id="eCar"/>
+      </div>
+      <div class="form-group">
+        <label>Serviciu</label>
+        <select id="eService">
+          <option>Schimb Ulei & Filtre</option>
+          <option>Diagnosticare Auto</option>
+          <option>Climatizare & AC</option>
+          <option>Anvelope & Jante</option>
+          <option>Frâne & Suspensie</option>
+          <option>ITP & Revizie</option>
+          <option>Curățare Exterior</option>
+          <option>Curățare Interior</option>
+          <option>Electricitate Auto</option>
+          <option>Alt serviciu</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="eDate"/>
+        </div>
+        <div class="form-group">
+          <label>Ora</label>
+          <select id="eTime">
+            <option>08:00</option><option>08:30</option>
+            <option>09:00</option><option>09:30</option>
+            <option>10:00</option><option>10:30</option>
+            <option>11:00</option><option>11:30</option>
+            <option>12:00</option><option>13:00</option>
+            <option>14:00</option><option>15:00</option>
+            <option>16:00</option><option>17:00</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="eStatus">
+          <option value="pending">În Așteptare</option>
+          <option value="confirmed">Confirmat</option>
+          <option value="completed">Finalizat</option>
+          <option value="cancelled">Anulat</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Mențiuni</label>
+        <textarea id="eNotes" rows="2"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="justify-content:center">
+        <i class="fas fa-floppy-disk"></i> Salvează Modificările
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: Gestionare Utilizatori -->
+<div class="modal-overlay" id="usersModal">
+  <div class="modal-box" style="max-width:680px">
+    <div class="modal-head">
+      <h3>Gestionare Utilizatori</h3>
+      <button class="modal-close" onclick="closeModal('usersModal')">✕</button>
+    </div>
+    <p style="color:var(--gray2);font-size:0.85rem;margin-bottom:20px">
+      Poți schimba rolul utilizatorilor înregistrați. Doar adminii pot vedea comenzile clienților.
+    </p>
+    <div class="table-wrap">
+      <table class="bookings-table" id="usersTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nume</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Înregistrat</th>
+            <th>Acțiuni</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/db.js"></script>
+<script src="js/common.js"></script>
+<script src="js/auth.js"></script>
+<script>
+/* =============================================
+   ADMIN PAGE LOGIC
+============================================= */
+
+let currentFilter = 'all';
+
+// ---- Verifica accesul la incarcare ----
+window.addEventListener('load', () => {
+  const s = DB.getSession();
+  if (!s || s.role !== 'admin') {
+    document.getElementById('accessDenied').style.display = 'flex';
+    document.getElementById('adminInterface').style.display = 'none';
+
+    // Daca nu e logat deloc, deschide modalul de login dupa 300ms
+    if (!s) {
+      setTimeout(() => openModal('authModal'), 400);
+      // Dupa login, verifica din nou
+      const checkInterval = setInterval(() => {
+        const sess = DB.getSession();
+        if (sess && sess.role === 'admin') {
+          clearInterval(checkInterval);
+          location.reload();
+        }
+      }, 500);
+    }
+    return;
+  }
+
+  document.getElementById('accessDenied').style.display = 'none';
+  document.getElementById('adminInterface').style.display = 'block';
+  document.getElementById('adminGreeting').textContent = 'Bun venit, ' + s.name + '!';
+  renderDashboard();
+});
+
+// ---- DASHBOARD ----
+function renderDashboard() {
+  const stats = DB.getBookingStats();
+  document.getElementById('statTotal').textContent     = stats.total;
+  document.getElementById('statPending').textContent   = stats.pending;
+  document.getElementById('statConfirmed').textContent = stats.confirmed;
+  document.getElementById('statCompleted').textContent = stats.completed;
+  renderTable();
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
+  const dateF  = document.getElementById('dateFilter')?.value || '';
+
+  let bookings = DB.getBookings().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  if (currentFilter !== 'all') bookings = bookings.filter(b => b.status === currentFilter);
+  if (search) bookings = bookings.filter(b =>
+    b.name.toLowerCase().includes(search) ||
+    b.car.toLowerCase().includes(search) ||
+    b.service.toLowerCase().includes(search)
+  );
+  if (dateF) bookings = bookings.filter(b => b.date === dateF);
+
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+
+  if (!bookings.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = bookings.map((b, i) => `
+    <tr>
+      <td style="color:var(--gray);font-size:0.8rem">${i + 1}</td>
+      <td><strong>${esc(b.name)}</strong></td>
+      <td style="color:var(--gray2)">${esc(b.phone)}</td>
+      <td style="color:var(--gray2)">${esc(b.car)}</td>
+      <td>${esc(b.service)}</td>
+      <td style="color:var(--gray2)">${formatDate(b.date)}</td>
+      <td style="color:var(--gray2)">${esc(b.time)}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td>
+        <div class="td-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openEdit('${b.id}')" title="Editează">
+            <i class="fas fa-pen"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deleteB('${b.id}')" title="Șterge">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function formatDate(d) {
+  if (!d) return '';
+  const [y, m, dd] = d.split('-');
+  return `${dd}.${m}.${y}`;
+}
+
+// ---- ADD MANUAL ----
+function submitManual(e) {
+  e.preventDefault();
+  const b = {
+    name:    document.getElementById('mName').value.trim(),
+    phone:   document.getElementById('mPhone').value.trim(),
+    car:     document.getElementById('mCar').value.trim(),
+    service: document.getElementById('mService').value,
+    date:    document.getElementById('mDate').value,
+    time:    document.getElementById('mTime').value,
+    notes:   document.getElementById('mNotes').value.trim(),
+  };
+  const added = DB.addBooking(b);
+  DB.updateBooking(added.id, { status: document.getElementById('mStatus').value });
+  closeModal('addModal');
+  e.target.reset();
+  renderDashboard();
+  showToast('Programare adăugată cu succes!');
+}
+
+// ---- EDIT ----
+function openEdit(id) {
+  const b = DB.getBookings().find(x => x.id === id);
+  if (!b) return;
+  document.getElementById('eId').value      = b.id;
+  document.getElementById('eName').value    = b.name;
+  document.getElementById('ePhone').value   = b.phone;
+  document.getElementById('eCar').value     = b.car;
+  document.getElementById('eService').value = b.service;
+  document.getElementById('eDate').value    = b.date;
+  document.getElementById('eTime').value    = b.time;
+  document.getElementById('eStatus').value  = b.status;
+  document.getElementById('eNotes').value   = b.notes || '';
+  openModal('editModal');
+}
+
+function saveEdit(e) {
+  e.preventDefault();
+  DB.updateBooking(document.getElementById('eId').value, {
+    name:    document.getElementById('eName').value.trim(),
+    phone:   document.getElementById('ePhone').value.trim(),
+    car:     document.getElementById('eCar').value.trim(),
+    service: document.getElementById('eService').value,
+    date:    document.getElementById('eDate').value,
+    time:    document.getElementById('eTime').value,
+    status:  document.getElementById('eStatus').value,
+    notes:   document.getElementById('eNotes').value.trim(),
+  });
+  closeModal('editModal');
+  renderDashboard();
+  showToast('Programare actualizată!');
+}
+
+// ---- DELETE ----
+function deleteB(id) {
+  if (!confirm('Ești sigur că vrei să ștergi această programare?')) return;
+  DB.deleteBooking(id);
+  renderDashboard();
+  showToast('Programare ștearsă.', 'error');
+}
+
+function clearAll() {
+  if (!confirm('Șterge TOATE programările? Această acțiune nu poate fi anulată.')) return;
+  DB.setBookings([]);
+  renderDashboard();
+  showToast('Toate programările au fost șterse.', 'error');
+}
+
+// ---- EXPORT CSV ----
+function exportCSV() {
+  const bookings = DB.getBookings();
+  if (!bookings.length) { showToast('Nu există programări de exportat.', 'error'); return; }
+  const headers = ['Nume','Telefon','Masina','Serviciu','Data','Ora','Status','Mentiuni','Creat La'];
+  const rows = bookings.map(b => [
+    b.name, b.phone, b.car, b.service, b.date, b.time, b.status, b.notes || '',
+    new Date(b.createdAt).toLocaleString('ro-RO')
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = 'autoline-programari-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  showToast('Export CSV descărcat!');
+}
+
+// ---- USERS MODAL ----
+function openUsersModal() {
+  renderUsersTable();
+  openModal('usersModal');
+}
+
+// Override openModal pentru usersModal sa randeze tabelul
+const _origOpen = window.openModal;
+window.openModal = function(id) {
+  if (id === 'usersModal') renderUsersTable();
+  _origOpen(id);
+};
+
+function renderUsersTable() {
+  const users = DB.getUsers();
+  document.getElementById('usersTableBody').innerHTML = users.map((u, i) => `
+    <tr>
+      <td style="color:var(--gray);font-size:0.8rem">${i + 1}</td>
+      <td><strong>${esc(u.name)}</strong></td>
+      <td style="color:var(--gray2)">@${esc(u.username)}</td>
+      <td style="color:var(--gray2)">${esc(u.email || '—')}</td>
+      <td>
+        <select onchange="changeRole(${u.id}, this.value)"
+          style="background:var(--card2);border:1px solid var(--border2);color:var(--white);border-radius:6px;padding:5px 10px;font-size:0.8rem;cursor:pointer"
+          ${u.id === 1 ? 'disabled' : ''}>
+          <option value="user"  ${u.role === 'user'  ? 'selected' : ''}>Client</option>
+          <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+        </select>
+      </td>
+      <td style="color:var(--gray2);font-size:0.8rem">${new Date(u.createdAt).toLocaleDateString('ro-RO')}</td>
+      <td>
+        ${u.id === 1 ? '<span style="color:var(--gray);font-size:0.78rem">Protejat</span>' : `
+        <button class="btn btn-danger btn-sm" onclick="removeUser(${u.id})">
+          <i class="fas fa-trash"></i>
+        </button>`}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function changeRole(userId, role) {
+  DB.setUserRole(userId, role);
+  showToast(role === 'admin' ? 'Utilizator promovat la Admin!' : 'Rol schimbat la Client.');
+  renderUsersTable();
+  renderNavAuth();
+}
+
+function removeUser(userId) {
+  if (!confirm('Ești sigur că vrei să ștergi acest utilizator?')) return;
+  const ok = DB.deleteUser(userId);
+  if (!ok) { showToast('Nu se poate șterge acest utilizator.', 'error'); return; }
+  showToast('Utilizator șters.', 'error');
+  renderUsersTable();
+}
+</script>
+</body>
+</html>

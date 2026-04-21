@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — AutoLine</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="poze/AutoLine-removebg.jpg" alt="AutoLine"/></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html"      class="nav-link">Acasă</a></li>
+      <li><a href="servicii.html"   class="nav-link">Servicii</a></li>
+      <li><a href="despre.html"     class="nav-link">Despre Noi</a></li>
+      <li><a href="programare.html" class="nav-link">Programare</a></li>
+      <li><a href="contact.html"    class="nav-link active">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <span class="tag">Suntem Aici</span>
+  <h1>Contactează-ne</h1>
+  <p>Ai întrebări? Suntem disponibili telefonic sau prin email în timpul programului.</p>
+  <div class="breadcrumb">
+    <a href="index.html">Acasă</a>
+    <i class="fas fa-chevron-right" style="font-size:0.65rem"></i>
+    <span>Contact</span>
+  </div>
+</div>
+
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="contact-layout">
+
+      <!-- INFO -->
+      <div class="contact-info">
+        <div class="card contact-item reveal">
+          <div class="contact-item-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div>
+            <h4>Adresă</h4>
+            <p>Str. Ion Creangă 9<br/>Hîrtopul Mare, Chișinău</p>
+          </div>
+        </div>
+        <div class="card contact-item reveal reveal-d1">
+          <div class="contact-item-icon"><i class="fas fa-phone"></i></div>
+          <div>
+            <h4>Telefon</h4>
+            <p><a href="tel:+37361273729" style="color:var(--accent);text-decoration:none">+373 61 273 729</a></p>
+          </div>
+        </div>
+        <div class="card contact-item reveal reveal-d2">
+          <div class="contact-item-icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <h4>Email</h4>
+            <p><a href="mailto:cazacucatalin010@gmail.com" style="color:var(--accent);text-decoration:none">cazacucatalin010@gmail.com</a></p>
+          </div>
+        </div>
+        <div class="card contact-item reveal reveal-d3">
+          <div class="contact-item-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <h4>Program</h4>
+            <p>Luni – Vineri: 08:00 – 18:00<br/>Sâmbătă: 09:00 – 14:00<br/>Duminică: Închis</p>
+          </div>
+        </div>
+        <div class="contact-map reveal">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <i class="fas fa-map-pin" style="font-size:1.5rem;color:var(--accent)"></i>
+            <span style="font-size:0.85rem">Str. Ion Creangă 9, Hîrtopul Mare</span>
+            <a href="https://maps.google.com" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:4px">
+              <i class="fas fa-external-link-alt"></i> Deschide în Maps
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMULAR CONTACT -->
+      <div class="reveal reveal-d1">
+        <div class="card" style="padding:32px">
+          <h3 style="font-family:var(--font-d);font-size:1.4rem;margin-bottom:24px">Trimite un Mesaj</h3>
+          <form id="contactForm" style="display:flex;flex-direction:column;gap:16px" onsubmit="submitContact(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nume *</label>
+                <input type="text" id="cName" required/>
+              </div>
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="cEmail" required/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Subiect *</label>
+              <select id="cSubject" required>
+                <option value="">— Alege subiectul —</option>
+                <option>Informații despre servicii</option>
+                <option>Programare urgentă</option>
+                <option>Reclamație</option>
+                <option>Colaborare</option>
+                <option>Altele</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Mesaj *</label>
+              <textarea id="cMessage" rows="5" placeholder="Scrie mesajul tău aici..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="justify-content:center;padding:13px">
+              <i class="fas fa-paper-plane"></i> Trimite Mesajul
+            </button>
+          </form>
+          <div id="contactSuccess" style="display:none;text-align:center;padding:32px 0">
+            <i class="fas fa-circle-check" style="font-size:2.5rem;color:var(--success);margin-bottom:12px;display:block"></i>
+            <h4 style="font-family:var(--font-d);font-size:1.3rem;margin-bottom:8px">Mesaj trimis!</h4>
+            <p style="color:var(--gray2);font-size:0.9rem">Îți vom răspunde în cel mai scurt timp posibil.</p>
+          </div>
+        </div>
+
+        <!-- Social links -->
+        <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+          <a href="#" class="card" style="display:flex;align-items:center;gap:10px;padding:14px 20px;text-decoration:none;color:var(--white);flex:1;min-width:160px">
+            <i class="fab fa-facebook-f" style="color:#1877f2;font-size:1.1rem"></i>
+            <div><div style="font-size:0.83rem;font-weight:600">Facebook</div><div style="font-size:0.75rem;color:var(--gray)">AutoLine Service</div></div>
+          </a>
+          <a href="#" class="card" style="display:flex;align-items:center;gap:10px;padding:14px 20px;text-decoration:none;color:var(--white);flex:1;min-width:160px">
+            <i class="fab fa-instagram" style="color:#e1306c;font-size:1.1rem"></i>
+            <div><div style="font-size:0.83rem;font-weight:600">Instagram</div><div style="font-size:0.75rem;color:var(--gray)">@autoline_md</div></div>
+          </a>
+          <a href="#" class="card" style="display:flex;align-items:center;gap:10px;padding:14px 20px;text-decoration:none;color:var(--white);flex:1;min-width:160px">
+            <i class="fab fa-whatsapp" style="color:#25d366;font-size:1.1rem"></i>
+            <div><div style="font-size:0.83rem;font-weight:600">WhatsApp</div><div style="font-size:0.75rem;color:var(--gray)">+373 61 273 729</div></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <img src="poze/AutoLine-removebg.jpg" alt="AutoLine" class="footer-logo"/>
+        <p>Service auto premium în Chișinău.</p>
+        <div class="social-row">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Navigare</h4>
+        <ul>
+          <li><a href="index.html">Acasă</a></li>
+          <li><a href="servicii.html">Servicii</a></li>
+          <li><a href="despre.html">Despre Noi</a></li>
+          <li><a href="programare.html">Programare</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Servicii</h4>
+        <ul>
+          <li><a href="servicii.html">Schimb Ulei</a></li>
+          <li><a href="servicii.html">Diagnosticare</a></li>
+          <li><a href="servicii.html">Climatizare</a></li>
+          <li><a href="servicii.html">Anvelope</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul class="footer-contact">
+          <li><i class="fas fa-phone"></i> +373 61 273 729</li>
+          <li><i class="fas fa-envelope"></i> cazacucatalin010@gmail.com</li>
+          <li><i class="fas fa-clock"></i> Lun–Vin: 08:00–18:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 AutoLine Auto Services.</p>
+      <p>Dezvoltat de <span class="text-accent">Cazacu Cătălin</span> — DAW-251</p>
+    </div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+<script src="js/db.js"></script>
+<script src="js/common.js"></script>
+<script src="js/auth.js"></script>
+<script>
+function submitContact(e) {
+  e.preventDefault();
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('contactSuccess').style.display = 'block';
+}
+</script>
+</body>
+</html>

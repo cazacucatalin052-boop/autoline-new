@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Programare Online — AutoLine</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="poze/AutoLine-removebg.jpg" alt="AutoLine"/></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html"      class="nav-link">Acasă</a></li>
+      <li><a href="servicii.html"   class="nav-link">Servicii</a></li>
+      <li><a href="despre.html"     class="nav-link">Despre Noi</a></li>
+      <li><a href="programare.html" class="nav-link active">Programare</a></li>
+      <li><a href="contact.html"    class="nav-link">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <span class="tag">Rapid & Simplu</span>
+  <h1>Programare Online</h1>
+  <p>Completează formularul și te confirmăm în mai puțin de 2 ore</p>
+  <div class="breadcrumb">
+    <a href="index.html">Acasă</a>
+    <i class="fas fa-chevron-right" style="font-size:0.65rem"></i>
+    <span>Programare</span>
+  </div>
+</div>
+
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="booking-layout">
+
+      <!-- STÂNGA: INFO -->
+      <div class="booking-info-panel reveal">
+        <h3>De ce să te<br/><em>programezi online?</em></h3>
+        <p style="color:var(--gray2); margin:16px 0 28px; font-size:0.9rem;">
+          Economisești timp și eviți aglomerația la recepție. Programările online au prioritate față de prezentările spontane.
+        </p>
+        <div class="info-item">
+          <div class="info-item-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <strong>Confirmare Rapidă</strong>
+            <span>Ești confirmat în maxim 2 ore de la trimiterea formularului</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-icon"><i class="fas fa-calendar-alt"></i></div>
+          <div>
+            <strong>Program Flexibil</strong>
+            <span>Luni–Vineri: 08:00–18:00 · Sâmbătă: 09:00–14:00</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-icon"><i class="fas fa-phone-alt"></i></div>
+          <div>
+            <strong>Confirmare prin Telefon</strong>
+            <span>Vei primi un apel de confirmare la numărul introdus</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-icon"><i class="fas fa-shield-alt"></i></div>
+          <div>
+            <strong>Garanție Inclusă</strong>
+            <span>Toate lucrările au garanție de minim 6 luni</span>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div>
+            <strong>Locație</strong>
+            <span>Str. Ion Creangă 9, Hîrtopul Mare, Chișinău</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DREAPTA: FORMULAR -->
+      <div class="booking-form-panel reveal reveal-d1">
+        <div class="card" style="padding:32px">
+
+          <!-- Formularul -->
+          <div id="formSection">
+            <h3 style="font-family:var(--font-d); font-size:1.4rem; margin-bottom:24px;">
+              Completează formularul
+            </h3>
+            <form class="booking-form" id="bookingForm" onsubmit="submitBooking(event)">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Nume și Prenume *</label>
+                  <input type="text" id="bName" placeholder="Ion Popescu" required/>
+                </div>
+                <div class="form-group">
+                  <label>Număr Telefon *</label>
+                  <input type="tel" id="bPhone" placeholder="+373 69 000 000" required/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Mașina (Marcă, Model, An) *</label>
+                <input type="text" id="bCar" placeholder="ex: Volkswagen Golf 7, 2017" required/>
+              </div>
+              <div class="form-group">
+                <label>Serviciu Dorit *</label>
+                <select id="bService" required>
+                  <option value="">— Alege serviciul —</option>
+                  <option>Schimb Ulei & Filtre</option>
+                  <option>Diagnosticare Auto</option>
+                  <option>Climatizare & AC</option>
+                  <option>Anvelope & Jante</option>
+                  <option>Frâne & Suspensie</option>
+                  <option>ITP & Revizie</option>
+                  <option>Curățare Exterior</option>
+                  <option>Curățare Interior</option>
+                  <option>Electricitate Auto</option>
+                  <option>Alt serviciu</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Data Dorită *</label>
+                  <input type="date" id="bDate" required/>
+                </div>
+                <div class="form-group">
+                  <label>Ora Preferată *</label>
+                  <select id="bTime" required>
+                    <option value="">— Alege ora —</option>
+                    <option>08:00</option><option>08:30</option>
+                    <option>09:00</option><option>09:30</option>
+                    <option>10:00</option><option>10:30</option>
+                    <option>11:00</option><option>11:30</option>
+                    <option>12:00</option><option>12:30</option>
+                    <option>13:00</option><option>13:30</option>
+                    <option>14:00</option><option>14:30</option>
+                    <option>15:00</option><option>15:30</option>
+                    <option>16:00</option><option>16:30</option>
+                    <option>17:00</option><option>17:30</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Mențiuni Suplimentare</label>
+                <textarea id="bNotes" placeholder="Descrie pe scurt problema sau orice informație utilă..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:14px;">
+                <i class="fas fa-calendar-check"></i> Trimite Programarea
+              </button>
+              <p style="color:var(--gray); font-size:0.78rem; text-align:center; margin-top:8px;">
+                <i class="fas fa-lock" style="font-size:0.7rem"></i> Datele tale sunt în siguranță și nu vor fi partajate cu terți.
+              </p>
+            </form>
+          </div>
+
+          <!-- Confirmare dupa submit -->
+          <div class="booking-success" id="successSection">
+            <i class="fas fa-circle-check"></i>
+            <h3>Programare Trimisă!</h3>
+            <p style="margin-bottom:20px;">Mulțumim! Vei fi contactat în maxim 2 ore pentru confirmare.</p>
+            <a href="index.html" class="btn btn-ghost">
+              <i class="fas fa-home"></i> Înapoi Acasă
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <img src="poze/AutoLine-removebg.jpg" alt="AutoLine" class="footer-logo"/>
+        <p>Service auto premium în Chișinău.</p>
+        <div class="social-row">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Navigare</h4>
+        <ul>
+          <li><a href="index.html">Acasă</a></li>
+          <li><a href="servicii.html">Servicii</a></li>
+          <li><a href="despre.html">Despre Noi</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul class="footer-contact">
+          <li><i class="fas fa-phone"></i> +373 61 273 729</li>
+          <li><i class="fas fa-clock"></i> Lun–Vin: 08:00–18:00</li>
+          <li><i class="fas fa-clock"></i> Sâm: 09:00–14:00</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Info</h4>
+        <ul>
+          <li><a href="#">Garanție 6 luni</a></li>
+          <li><a href="#">Prețuri transparente</a></li>
+          <li><a href="#">Piese originale</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 AutoLine Auto Services.</p>
+      <p>Dezvoltat de <span class="text-accent">Cazacu Cătălin</span> — DAW-251</p>
+    </div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+<script src="js/db.js"></script>
+<script src="js/common.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // Seteaza data minima la azi
+  document.getElementById('bDate').min = new Date().toISOString().split('T')[0];
+
+  function submitBooking(e) {
+    e.preventDefault();
+    const booking = {
+      name:    document.getElementById('bName').value.trim(),
+      phone:   document.getElementById('bPhone').value.trim(),
+      car:     document.getElementById('bCar').value.trim(),
+      service: document.getElementById('bService').value,
+      date:    document.getElementById('bDate').value,
+      time:    document.getElementById('bTime').value,
+      notes:   document.getElementById('bNotes').value.trim(),
+    };
+    DB.addBooking(booking);
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('successSection').style.display = 'block';
+  }
+</script>
+</body>
+</html>
