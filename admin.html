@@ -4,6 +4,648 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Panel — AutoLine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+  <canvas id="bubblesCanvas"></canvas>
+
+  <!-- =====================================================
+       OVERLAY LOGIN ADMIN
+       Afișat inițial, ascuns după autentificare reușită
+  ===================================================== -->
+  <div class="admin-login-overlay" id="loginOverlay">
+    <div class="admin-login-box">
+      <!-- Logo -->
+      <img src="poze/AutoLine-removebg.jpg" alt="AutoLine" class="logo-img"/>
+      <h2>Admin <span class="text-red">Panel</span></h2>
+      <p>Introdu credențialele pentru a accesa panoul de administrare</p>
+
+      <!-- Câmp username -->
+      <div class="form-group">
+        <label for="adminUser">Utilizator</label>
+        <input type="text" id="adminUser" placeholder="admin" autocomplete="username"/>
+      </div>
+      <!-- Câmp parolă -->
+      <div class="form-group">
+        <label for="adminPass">Parolă</label>
+        <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+
+      <!-- Buton login -->
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="adminLogin()">
+        <i class="fas fa-sign-in-alt"></i> Autentificare
+      </button>
+
+      <!-- Mesaj eroare — ascuns inițial -->
+      <div class="admin-error" id="adminError">
+        <i class="fas fa-exclamation-triangle"></i> Credențiale incorecte. Încearcă din nou.
+      </div>
+
+      <!-- Hint pentru testare -->
+      <p style="color:var(--gray);font-size:0.78rem;margin-top:20px;opacity:0.6">
+        <i class="fas fa-info-circle"></i> Test: user: <strong>admin</strong> | parolă: <strong>autoline2026</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       NAVBAR ADMIN
+  ===================================================== -->
+  <nav class="navbar scrolled" style="display:none" id="adminNav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="poze/AutoLine-removebg.jpg" alt="AutoLine Logo" class="logo-img"/>
+      </a>
+      <div style="display:flex;align-items:center;gap:16px">
+        <span style="color:var(--gray);font-size:0.85rem">
+          <i class="fas fa-user-shield" style="color:var(--red)"></i> Administrator
+        </span>
+        <!-- Buton logout -->
+        <button class="btn btn-outline" style="padding:8px 20px;font-size:0.85rem" onclick="adminLogout()">
+          <i class="fas fa-sign-out-alt"></i> Ieșire
+        </button>
+        <a href="index.html" class="btn btn-primary" style="padding:8px 20px;font-size:0.85rem">
+          <i class="fas fa-home"></i> Site
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =====================================================
+       DASHBOARD ADMIN
+       Afișat după autentificare reușită
+  ===================================================== -->
+  <div class="admin-dashboard" id="adminDashboard">
+
+    <!-- Header dashboard -->
+    <div class="admin-header">
+      <div>
+        <h1>Dashboard <span class="text-red">AutoLine</span></h1>
+        <p style="color:var(--gray);font-size:0.9rem">Gestionează programările clienților</p>
+      </div>
+      <!-- Buton adaugă programare manuală -->
+      <button class="btn btn-primary" onclick="showAddModal()">
+        <i class="fas fa-plus"></i> Adaugă Programare
+      </button>
+    </div>
+
+    <!-- ---- CARDURI STATISTICI ---- -->
+    <!-- Valorile sunt calculate dinamic de JS din localStorage -->
+    <div class="admin-stats">
+      <div class="admin-stat-card">
+        <div class="icon">Programari</div>
+        <div class="num" id="statTotal">0</div>
+        <div class="lbl">Total Programări</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="icon">Comenzi nepreluate</div>
+        <div class="num" id="statPending">0</div>
+        <div class="lbl">În Așteptare</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="icon">Programari preluate</div>
+        <div class="num" id="statConfirmed">0</div>
+        <div class="lbl">Confirmate</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="icon">Programari Completate</div>
+        <div class="num" id="statCompleted">0</div>
+        <div class="lbl">Finalizate</div>
+      </div>
+    </div>
+
+    <!-- ---- TAB-URI FILTRARE ---- -->
+    <div class="admin-tabs">
+      <!-- Fiecare tab filtrează tabelul prin JS -->
+      <button class="admin-tab active" onclick="filterTab('all', this)">
+        <i class="fas fa-list"></i> Toate
+      </button>
+      <button class="admin-tab" onclick="filterTab('pending', this)">
+        <i class="fas fa-hourglass-half"></i> În Așteptare
+      </button>
+      <button class="admin-tab" onclick="filterTab('confirmed', this)">
+        <i class="fas fa-check"></i> Confirmate
+      </button>
+      <button class="admin-tab" onclick="filterTab('completed', this)">
+        <i class="fas fa-flag-checkered"></i> Finalizate
+      </button>
+      <button class="admin-tab" onclick="filterTab('cancelled', this)">
+        <i class="fas fa-times"></i> Anulate
+      </button>
+    </div>
+
+    <!-- ---- BARA DE CĂUTARE & FILTRARE ---- -->
+    <div class="admin-filters">
+      <!-- Căutare după nume/mașină/serviciu -->
+      <input type="text" id="searchInput" placeholder="🔍 Caută după nume, mașină, serviciu..."
+             oninput="renderTable()" style="flex:1;min-width:200px"/>
+      <!-- Filtrare după dată -->
+      <input type="date" id="dateFilter" onchange="renderTable()" title="Filtrare după dată"/>
+      <!-- Export CSV -->
+      <button class="btn btn-outline" style="padding:10px 20px;font-size:0.85rem" onclick="exportCSV()">
+        <i class="fas fa-download"></i> Export CSV
+      </button>
+      <!-- Șterge toate (cu confirmare) -->
+      <button class="btn btn-outline" style="padding:10px 20px;font-size:0.85rem;border-color:rgba(229,25,43,0.3);color:var(--red)" onclick="clearAll()">
+        <i class="fas fa-trash"></i> Șterge Tot
+      </button>
+    </div>
+
+    <!-- ---- TABELUL CU PROGRAMĂRI ---- -->
+    <div class="bookings-table-wrap">
+      <table class="bookings-table" id="bookingsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>Telefon</th>
+            <th>Mașină</th>
+            <th>Serviciu</th>
+            <th>Data</th>
+            <th>Ora</th>
+            <th>Status</th>
+            <th>Acțiuni</th>
+          </tr>
+        </thead>
+        <!-- tbody populat dinamic de JS (renderTable) -->
+        <tbody id="bookingsBody">
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Stare goală — afișată când nu există programări -->
+    <div class="empty-state" id="emptyState" style="display:none">
+      <i class="fas fa-calendar-times"></i>
+      <h3>Nicio programare găsită</h3>
+      <p>Nu există programări în această categorie.</p>
+      <a href="programare.html" class="btn btn-primary" style="margin-top:16px">
+        <i class="fas fa-plus"></i> Creează Prima Programare
+      </a>
+    </div>
+
+  </div>
+
+  <!-- =====================================================
+       MODAL: ADAUGĂ PROGRAMARE MANUALĂ
+       Apare la click pe butonul "Adaugă Programare"
+  ===================================================== -->
+  <div id="addModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px">
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px">
+        <h3 style="font-family:var(--font-title);font-size:1.5rem">Adaugă Programare <span class="text-red">Manuală</span></h3>
+        <button onclick="hideAddModal()" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:1.5rem">✕</button>
+      </div>
+
+      <!-- Câmpuri formular modal -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nume Client *</label>
+          <input type="text" id="m_name" placeholder="Ion Popescu"/>
+        </div>
+        <div class="form-group">
+          <label>Telefon *</label>
+          <input type="tel" id="m_phone" placeholder="+373 69 XXX XXX"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Mașină *</label>
+          <input type="text" id="m_car" placeholder="BMW 320d"/>
+        </div>
+        <div class="form-group">
+          <label>Nr. Înmatriculare</label>
+          <input type="text" id="m_plate" placeholder="MD 001 AAA"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Serviciu *</label>
+        <select id="m_service">
+          <option value="">— Selectează —</option>
+          <option>Schimb Ulei & Filtre</option>
+          <option>Diagnosticare Electronică</option>
+          <option>Climatizare & AC</option>
+          <option>Anvelope & Jante</option>
+          <option>Frâne & Suspensie</option>
+          <option>ITP & Revizie</option>
+          <option>Altele</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data *</label>
+          <input type="date" id="m_date"/>
+        </div>
+        <div class="form-group">
+          <label>Ora *</label>
+          <select id="m_time">
+            <option value="">— Ora —</option>
+            <option>08:00</option><option>09:00</option><option>10:00</option>
+            <option>11:00</option><option>12:00</option><option>13:00</option>
+            <option>14:00</option><option>15:00</option><option>16:00</option>
+            <option>17:00</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="m_status">
+          <option value="pending">În Așteptare</option>
+          <option value="confirmed">Confirmat</option>
+          <option value="completed">Finalizat</option>
+          <option value="cancelled">Anulat</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveManualBooking()">
+        <i class="fas fa-save"></i> Salvează Programarea
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       JAVASCRIPT ADMIN PANEL
+  ===================================================== -->
+  <script src="js/script.js"></script>
+  <script>
+    /* ================================================
+       ADMIN.JS — logică completă panel administrare
+       Toate datele sunt stocate în localStorage
+    ================================================ */
+
+    // ---- CREDENȚIALE LOGIN (doar pentru test local) ----
+    // Schimbă parola înainte de a pune site-ul live!
+    const ADMIN_USER = 'admin';
+    const ADMIN_PASS = 'autoline2026';
+
+    // Stare curentă: tab activ și filtrul de status
+    let currentFilter = 'all'; // Filtrul de tab activ
+
+    // ---- FUNCȚIA LOGIN ----
+    // Verifică credențialele și afișează dashboard-ul
+    function adminLogin() {
+      const user = document.getElementById('adminUser').value.trim();
+      const pass = document.getElementById('adminPass').value.trim();
+      const error = document.getElementById('adminError');
+
+      if (user === ADMIN_USER && pass === ADMIN_PASS) {
+        // Credențiale corecte: ascundem overlay, arătăm dashboard
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminNav').style.display = 'block';
+        document.getElementById('adminDashboard').style.display = 'block';
+        error.style.display = 'none';
+        loadDashboard(); // Încarcă datele
+      } else {
+        // Credențiale greșite: arătăm eroarea
+        error.style.display = 'block';
+        document.getElementById('adminPass').value = '';
+      }
+    }
+
+    // Enter key pe câmpul parolă declanșează login
+    document.getElementById('adminPass').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') adminLogin();
+    });
+    document.getElementById('adminUser').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') adminLogin();
+    });
+
+    // ---- FUNCȚIA LOGOUT ----
+    function adminLogout() {
+      if (confirm('Ești sigur că vrei să ieși din admin?')) {
+        location.reload(); // Reîncarcă pagina = înapoi la login
+      }
+    }
+
+    // ---- ÎNCARCĂ DATELE DIN LOCALSTORAGE ----
+    // Citim programările și actualizăm statisticile + tabelul
+    function loadDashboard() {
+      renderStats(); // Actualizează cardurile cu numere
+      renderTable(); // Populează tabelul
+    }
+
+    // ---- OBȚINE PROGRAMĂRILE DIN LOCALSTORAGE ----
+    function getBookings() {
+      return JSON.parse(localStorage.getItem('autoline_bookings') || '[]');
+    }
+
+    // ---- SALVEAZĂ PROGRAMĂRILE ÎN LOCALSTORAGE ----
+    function saveBookings(bookings) {
+      localStorage.setItem('autoline_bookings', JSON.stringify(bookings));
+    }
+
+    // ---- ACTUALIZEAZĂ CARDURILE STATISTICI ----
+    function renderStats() {
+      const bookings = getBookings();
+      document.getElementById('statTotal').textContent = bookings.length;
+      document.getElementById('statPending').textContent = bookings.filter(b => b.status === 'pending').length;
+      document.getElementById('statConfirmed').textContent = bookings.filter(b => b.status === 'confirmed').length;
+      document.getElementById('statCompleted').textContent = bookings.filter(b => b.status === 'completed').length;
+    }
+
+    // ---- FILTRARE TAB-URI ----
+    // Setează filtrul curent și re-renderizează tabelul
+    function filterTab(filter, btn) {
+      currentFilter = filter;
+
+      // Actualizează stilul butonului activ
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+
+      renderTable();
+    }
+
+    // ---- POPULEAZĂ TABELUL CU PROGRAMĂRI ----
+    function renderTable() {
+      const bookings = getBookings();
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+      const dateVal = document.getElementById('dateFilter').value;
+      const tbody = document.getElementById('bookingsBody');
+      const emptyState = document.getElementById('emptyState');
+
+      // Aplicăm filtrele:
+      let filtered = bookings.filter(b => {
+        // 1. Filtru tab (status)
+        const matchTab = currentFilter === 'all' || b.status === currentFilter;
+
+        // 2. Filtru căutare text (caută în toate câmpurile)
+        const searchStr = `${b.name} ${b.car} ${b.service} ${b.phone} ${b.plate}`.toLowerCase();
+        const matchSearch = !searchVal || searchStr.includes(searchVal);
+
+        // 3. Filtru dată
+        const matchDate = !dateVal || b.date === dateVal;
+
+        return matchTab && matchSearch && matchDate;
+      });
+
+      // Sortăm după dată (cele mai noi primele)
+      filtered.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+
+      // Golim tabelul
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        // Afișăm starea goală dacă nu sunt rezultate
+        document.getElementById('bookingsTable').style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      document.getElementById('bookingsTable').style.display = 'table';
+      emptyState.style.display = 'none';
+
+      // Generăm rândurile tabelului
+      filtered.forEach((b, index) => {
+        const row = document.createElement('tr');
+
+        // Clasa CSS pentru badge-ul de status
+        const statusClass = {
+          pending: 'status-pending',
+          confirmed: 'status-confirmed',
+          completed: 'status-completed',
+          cancelled: 'status-cancelled'
+        }[b.status] || 'status-pending';
+
+        // Textul status în română
+        const statusText = {
+          pending: 'În Așteptare',
+          confirmed: 'Confirmat',
+          completed: 'Finalizat',
+          cancelled: 'Anulat'
+        }[b.status] || 'În Așteptare';
+
+        // Formatăm data mai frumos (ex: 07.04.2026)
+        const dateFormatted = b.date ? b.date.split('-').reverse().join('.') : '—';
+
+        row.innerHTML = `
+          <td style="color:var(--gray)">${index + 1}</td>
+          <td>
+            <strong>${escapeHtml(b.name)}</strong><br/>
+            <span style="color:var(--gray);font-size:0.8rem">${escapeHtml(b.email || '')}</span>
+          </td>
+          <td><a href="tel:${escapeHtml(b.phone)}" style="color:var(--white);text-decoration:none">${escapeHtml(b.phone)}</a></td>
+          <td>
+            <strong>${escapeHtml(b.car)}</strong><br/>
+            <span style="color:var(--gray);font-size:0.8rem">${escapeHtml(b.plate || '—')}</span>
+          </td>
+          <td>${escapeHtml(b.service)}</td>
+          <td>${dateFormatted}</td>
+          <td>${escapeHtml(b.time || '—')}</td>
+          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <!-- Buton Confirmă (activ doar când e pending) -->
+              ${b.status === 'pending' ? `<button class="action-btn btn-confirm" onclick="changeStatus(${b.id}, 'confirmed')">✓ Confirmă</button>` : ''}
+              <!-- Buton Finalizat (activ când e confirmat) -->
+              ${b.status === 'confirmed' ? `<button class="action-btn btn-confirm" onclick="changeStatus(${b.id}, 'completed')">🏁 Finalizat</button>` : ''}
+              <!-- Buton Anulează -->
+              ${b.status !== 'cancelled' && b.status !== 'completed'
+                ? `<button class="action-btn btn-cancel" onclick="changeStatus(${b.id}, 'cancelled')">✕ Anulează</button>`
+                : ''}
+              <!-- Buton Șterge -->
+              <button class="action-btn btn-delete" onclick="deleteBooking(${b.id})">🗑</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Actualizăm și statisticile
+      renderStats();
+    }
+
+    // ---- SCHIMBĂ STATUSUL UNEI PROGRAMĂRI ----
+    function changeStatus(id, newStatus) {
+      const bookings = getBookings();
+      const index = bookings.findIndex(b => b.id === id);
+      if (index !== -1) {
+        bookings[index].status = newStatus; // Actualizăm statusul
+        saveBookings(bookings); // Salvăm
+        renderTable(); // Re-renderizăm tabelul
+      }
+    }
+
+    // ---- ȘTERGE O PROGRAMARE ----
+    function deleteBooking(id) {
+      if (!confirm('Ești sigur că vrei să ștergi această programare?')) return;
+      const bookings = getBookings().filter(b => b.id !== id); // Filtrăm afară
+      saveBookings(bookings);
+      renderTable();
+    }
+
+    // ---- ȘTERGE TOATE PROGRAMĂRILE ----
+    function clearAll() {
+      if (!confirm('Ești sigur că vrei să ștergi TOATE programările? Acțiunea nu poate fi anulată!')) return;
+      localStorage.removeItem('autoline_bookings');
+      renderTable();
+    }
+
+    // ---- EXPORT CSV ----
+    // Generăm un fișier CSV cu toate programările și îl descărcăm
+    function exportCSV() {
+      const bookings = getBookings();
+      if (bookings.length === 0) {
+        alert('Nu există programări de exportat.');
+        return;
+      }
+
+      // Header-ul CSV
+      const headers = ['ID', 'Nume', 'Telefon', 'Email', 'Masina', 'Nr.Inmatriculare', 'Serviciu', 'Data', 'Ora', 'Status', 'Creat'];
+      const rows = bookings.map(b => [
+        b.id, b.name, b.phone, b.email || '', b.car, b.plate || '', b.service, b.date, b.time, b.status, b.createdAt
+      ]);
+
+      // Construim conținutul CSV
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+      // Creăm un link invizibil și simulăm click pentru descărcare
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `autoline-programari-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ---- MODAL ADAUGĂ PROGRAMARE MANUALĂ ----
+    function showAddModal() {
+      const modal = document.getElementById('addModal');
+      modal.style.display = 'flex';
+      // Setăm data minimă pentru câmpul dată
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('m_date').setAttribute('min', today);
+    }
+
+    function hideAddModal() {
+      document.getElementById('addModal').style.display = 'none';
+    }
+
+    // Închide modalul la click pe fundal
+    document.getElementById('addModal').addEventListener('click', function(e) {
+      if (e.target === this) hideAddModal();
+    });
+
+    // ---- SALVEAZĂ PROGRAMARE MANUALĂ ----
+    function saveManualBooking() {
+      const name = document.getElementById('m_name').value.trim();
+      const phone = document.getElementById('m_phone').value.trim();
+      const car = document.getElementById('m_car').value.trim();
+      const service = document.getElementById('m_service').value;
+      const date = document.getElementById('m_date').value;
+      const time = document.getElementById('m_time').value;
+
+      if (!name || !phone || !car || !service || !date || !time) {
+        alert('Completează toate câmpurile obligatorii!');
+        return;
+      }
+
+      const newBooking = {
+        id: Date.now(),
+        name,
+        phone,
+        email: '',
+        car,
+        plate: document.getElementById('m_plate').value.trim(),
+        service,
+        date,
+        time,
+        status: document.getElementById('m_status').value,
+        notes: '',
+        createdAt: new Date().toLocaleString('ro-RO')
+      };
+
+      const bookings = getBookings();
+      bookings.push(newBooking);
+      saveBookings(bookings);
+
+      hideAddModal();
+      // Resetăm câmpurile modalului
+      ['m_name','m_phone','m_car','m_plate'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('m_service').value = '';
+      document.getElementById('m_time').value = '';
+      document.getElementById('m_status').value = 'pending';
+
+      renderTable();
+      alert('Programarea a fost adăugată cu succes!');
+    }
+
+    // ---- SANITIZARE HTML (previne XSS) ----
+    // Înlocuiește caracterele speciale HTML pentru siguranță
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ---- DATE DE TEST (pentru demonstrare) ----
+    // Dacă nu există programări, adăugăm câteva exemple demo
+    (function addDemoData() {
+      const existing = getBookings();
+      if (existing.length === 0) {
+        const demoBookings = [
+          {
+            id: 1001,
+            name: 'Ion Popescu',
+            phone: '+373 69 123 456',
+            email: 'ion.popescu@gmail.com',
+            car: 'BMW 320d E90',
+            plate: 'MD 001 ABC',
+            service: 'Schimb Ulei & Filtre',
+            date: new Date().toISOString().split('T')[0], // Azi
+            time: '10:00',
+            status: 'pending',
+            notes: 'Și filtru habitaclu dacă se poate',
+            createdAt: new Date().toLocaleString('ro-RO')
+          },
+          {
+            id: 1002,
+            name: 'Maria Ionescu',
+            phone: '+373 69 234 567',
+            email: 'maria@yahoo.com',
+            car: 'Volkswagen Golf 7',
+            plate: 'MD 002 XYZ',
+            service: 'Diagnosticare Electronică',
+            date: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Mâine
+            time: '14:00',
+            status: 'confirmed',
+            notes: 'Lumina motorului aprinsă de 2 zile',
+            createdAt: new Date().toLocaleString('ro-RO')
+          },
+          {
+            id: 1003,
+            name: 'Andrei Vasile',
+            phone: '+373 69 345 678',
+            email: '',
+            car: 'Toyota Corolla 2021',
+            plate: 'MD 003 TOY',
+            service: 'Anvelope & Jante',
+            date: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Ieri
+            time: '09:00',
+            status: 'completed',
+            notes: 'Sezon de vară',
+            createdAt: new Date().toLocaleString('ro-RO')
+          }
+        ];
+        saveBookings(demoBookings);
+      }
+    })();
+
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — AutoLine</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link rel="stylesheet" href="css/style.css"/>

@@ -3,6 +3,261 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Servicii — AutoLine Auto Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+  <!-- Canvas bule fundal -->
+  <canvas id="bubblesCanvas"></canvas>
+
+  <!-- NAVBAR (identic pe toate paginile) -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="poze/AutoLine-removebg.jpg" alt="AutoLine Logo" class="logo-img"/>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Acasă</a></li>
+        <li><a href="servicii.html" class="nav-link active">Servicii</a></li>
+        <li><a href="despre.html" class="nav-link">Despre Noi</a></li>
+        <li><a href="programare.html" class="nav-link">Programare</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="admin.html" class="nav-link nav-admin"><i class="fas fa-lock"></i> Admin</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Meniu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HEADER PAGINĂ -->
+  <div class="page-hero">
+    <span class="section-tag">Ce Oferim</span>
+    <h1>Serviciile Noastre <span class="text-red">Auto</span></h1>
+    <p>Soluții complete pentru orice problemă a vehiculului tău</p>
+    <div class="breadcrumb">
+      <a href="index.html">Acasă</a>
+      <i class="fas fa-chevron-right" style="font-size:0.7rem"></i>
+      <span>Servicii</span>
+    </div>
+  </div>
+
+  <!-- GRID SERVICII COMPLETE -->
+  <section class="section">
+    <div class="container">
+      <div class="services-full-grid">
+
+        <!-- Card 1: Schimb Ulei -->
+        <div class="service-full-card" data-aos="fade-up">
+          <!-- Pune imagine reprezentativă pentru serviciu -->
+          <img src="poze/schimb ulei.jpg" alt="Schimb Ulei" class="service-full-img"/>
+          <div class="service-full-body">
+            <div class="service-icon"><i class="fas fa-oil-can"></i></div>
+            <h3>Schimb Ulei & Filtre</h3>
+            <p>Oferim servicii complete de schimb ulei motor cu produse de înaltă calitate: Castrol, Mobil, Shell. Includem înlocuirea filtrului de ulei, aer, habitaclu și combustibil. Lucrarea include și inspecția vizuală a motorului.</p>
+            <ul style="color:var(--gray);font-size:0.88rem;padding-left:20px;margin-bottom:16px;line-height:2">
+              <li>Ulei sintetic 5W-30 / 5W-40 / 0W-40</li>
+              <li>Filtru ulei OEM sau echivalent</li>
+              <li>Filtru aer + habitaclu opțional</li>
+              <li>Resetare indicator ulei</li>
+            </ul>
+            <span class="service-price"><i class="fas fa-tag"></i> De la 350 MDL</span>
+            <br/>
+            <a href="programare.html" class="btn btn-primary" style="margin-top:12px">
+              <i class="fas fa-calendar-check"></i> Programează-te
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 2: Diagnosticare -->
+        <div class="service-full-card" data-aos="fade-up" data-delay="100">
+          <img src="poze/diagnostica.jpg" alt="Diagnosticare" class="service-full-img"/>
+          <div class="service-full-body">
+            <div class="service-icon"><i class="fas fa-microchip"></i></div>
+            <h3>Diagnosticare Electronică</h3>
+            <p>Scanăm complet sistemele electronice ale vehiculului folosind echipamente profesionale Launch X431, Autel MaxiSys. Identificăm erorile din motor, transmisie, ABS, airbag, climatizare și alte sisteme.</p>
+            <ul style="color:var(--gray);font-size:0.88rem;padding-left:20px;margin-bottom:16px;line-height:2">
+              <li>Scanare OBD2 completă</li>
+              <li>Ștergere coduri de eroare</li>
+              <li>Raport detaliat scris</li>
+              <li>Estimare costuri reparație</li>
+            </ul>
+            <span class="service-price"><i class="fas fa-tag"></i> De la 200 MDL</span>
+            <br/>
+            <a href="programare.html" class="btn btn-primary" style="margin-top:12px">
+              <i class="fas fa-calendar-check"></i> Programează-te
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 3: Climatizare -->
+        <div class="service-full-card" data-aos="fade-up" data-delay="200">
+          <img src="poze/climatizare.jpg" alt="Climatizare" class="service-full-img"/>
+          <div class="service-full-body">
+            <div class="service-icon"><i class="fas fa-wind"></i></div>
+            <h3>Climatizare & Aer Condiționat</h3>
+            <p>Verificare completă și reparare sistem AC: compresoare, condensatoare, evaporatoare, robinete de expansiune. Încărcare freon R134a și R1234yf. Curățare și dezinfectare sistem AC.</p>
+            <ul style="color:var(--gray);font-size:0.88rem;padding-left:20px;margin-bottom:16px;line-height:2">
+              <li>Verificare etanșeitate sistem</li>
+              <li>Încărcare freon (toate tipurile)</li>
+              <li>Reparare compresoare</li>
+              <li>Curățare + dezinfectare</li>
+            </ul>
+            <span class="service-price"><i class="fas fa-tag"></i> De la 400 MDL</span>
+            <br/>
+            <a href="programare.html" class="btn btn-primary" style="margin-top:12px">
+              <i class="fas fa-calendar-check"></i> Programează-te
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 4: Anvelope -->
+        <div class="service-full-card" data-aos="fade-up" data-delay="300">
+          <img src="poze/schimb-anvelope.jpg" alt="Anvelope" class="service-full-img"/>
+          <div class="service-full-body">
+            <div class="service-icon"><i class="fas fa-circle-notch"></i></div>
+            <h3>Anvelope & Jante</h3>
+            <p>Servicii complete pentru anvelope și jante: montaj, demontaj, echilibrare, aliniere și depozitare sezonieră. Colaborăm cu cele mai mari branduri: Michelin, Continental, Bridgestone, Pirelli.</p>
+            <ul style="color:var(--gray);font-size:0.88rem;padding-left:20px;margin-bottom:16px;line-height:2">
+              <li>Montaj / demontaj anvelope</li>
+              <li>Echilibrare dinamică</li>
+              <li>Aliniere geometrie (unghi Toe, Camber)</li>
+              <li>Vulcanizare la rece / cald</li>
+              <li>Depozitare sezonieră</li>
+            </ul>
+            <span class="service-price"><i class="fas fa-tag"></i> De la 150 MDL</span>
+            <br/>
+            <a href="programare.html" class="btn btn-primary" style="margin-top:12px">
+              <i class="fas fa-calendar-check"></i> Programează-te
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 5: Frâne & Suspensie -->
+        <div class="service-full-card" data-aos="fade-up" data-delay="400">
+          <img src="poze/frane.jpg" alt="Frâne" class="service-full-img"/>
+          <div class="service-full-body">
+            <div class="service-icon"><i class="fas fa-dot-circle"></i></div>
+            <h3>Frâne & Suspensie</h3>
+            <p>Siguranța pe drum este prioritatea noastră. Verificăm și înlocuim componentele sistemului de frânare și suspensie folosind piese originale sau de calitate echivalentă cu garanție de 12 luni.</p>
+            <ul style="color:var(--gray);font-size:0.88rem;padding-left:20px;margin-bottom:16px;line-height:2">
+              <li>Înlocuire plăcuțe față/spate</li>
+              <li>Strunjire / înlocuire discuri</li>
+              <li>Înlocuire amortizoare</li>
+              <li>Reparare etrier frână</li>
+              <li>Reglare frână de mână</li>
+            </ul>
+            <span class="service-price"><i class="fas fa-tag"></i> De la 500 MDL</span>
+            <br/>
+            <a href="programare.html" class="btn btn-primary" style="margin-top:12px">
+              <i class="fas fa-calendar-check"></i> Programează-te
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 6: ITP & Revizie -->
+        <div class="service-full-card" data-aos="fade-up" data-delay="500">
+          <img src="poze/testare auto.jpg" alt="ITP" class="service-full-img"/>
+          <div class="service-full-body">
+            <div class="service-icon"><i class="fas fa-clipboard-check"></i></div>
+            <h3>ITP & Revizie Completă</h3>
+            <p>Pregătim vehiculul tău pentru inspecția tehnică periodică și efectuăm revizii complete conform specificațiilor producătorului. Includem verificarea a peste 50 de puncte tehnice.</p>
+            <ul style="color:var(--gray);font-size:0.88rem;padding-left:20px;margin-bottom:16px;line-height:2">
+              <li>Pre-ITP: verificare 50+ puncte</li>
+              <li>Revizie la intervale km/timp</li>
+              <li>Setare distribuție (curea/lanț)</li>
+              <li>Verificare lichide (frână, servodirecție, răcire)</li>
+            </ul>
+            <span class="service-price"><i class="fas fa-tag"></i> De la 250 MDL</span>
+            <br/>
+            <a href="programare.html" class="btn btn-primary" style="margin-top:12px">
+              <i class="fas fa-calendar-check"></i> Programează-te
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <div class="container">
+      <h2>Nu găsești serviciul de care ai nevoie?</h2>
+      <p>Contactează-ne și îți vom oferi o soluție personalizată pentru vehiculul tău.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <a href="programare.html" class="btn btn-primary btn-large">
+          <i class="fas fa-calendar-plus"></i> Programare Online
+        </a>
+        <a href="contact.html" class="btn btn-outline btn-large">
+          <i class="fas fa-phone"></i> Sună-ne
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <img src="poze/AutoLine-removebg.jpg" alt="AutoLine" class="footer-logo"/>
+          <p>Service auto premium în Chișinău. Profesionalism, calitate și transparență.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Linkuri Rapide</h4>
+          <ul>
+            <li><a href="index.html">Acasă</a></li>
+            <li><a href="servicii.html">Servicii</a></li>
+            <li><a href="despre.html">Despre Noi</a></li>
+            <li><a href="programare.html">Programare</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Servicii</h4>
+          <ul>
+            <li><a href="#">Schimb Ulei</a></li>
+            <li><a href="#">Diagnosticare</a></li>
+            <li><a href="#">Climatizare</a></li>
+            <li><a href="#">Anvelope</a></li>
+            <li><a href="#">Frâne</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul class="contact-list">
+            <li><i class="fas fa-map-marker-alt"></i> Str. Ion Creanga 9, Hîrtopul Mare</li>
+            <li><i class="fas fa-phone"></i> +373 61 273 729</li>
+            <li><i class="fas fa-envelope"></i> cazacucatalin010@gmail.com</li>
+            <li><i class="fas fa-clock"></i> Lun-Vin: 08:00 - 18:00</li>
+            <li><i class="fas fa-clock"></i> Sâm: 09:00 - 14:00</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 AutoLine Auto Services. Toate drepturile rezervate.</p>
+        <p>Dezvoltat de <span class="text-red">Cazacu Cătălin</span> — DAW-251</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Servicii — AutoLine</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
